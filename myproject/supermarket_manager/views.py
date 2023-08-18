@@ -2,6 +2,12 @@ from django.http import JsonResponse
 from django.db.utils import IntegrityError
 from django.views.decorators.csrf import csrf_exempt
 from .models import Role
+from .constants import (
+    MESSAGE_ADDED,
+    MESSAGE_EXISTS,
+    MESSAGE_REQUIRED,
+    MESSAGE_INVALID_METHOD,
+)
 import json
 
 
@@ -25,9 +31,9 @@ def add_role(request):
             try:
                 role = Role(role_name=role_name)
                 role.save()
-                return JsonResponse({"message": "Role added successfully"}, status=200)
+                return JsonResponse({"message": MESSAGE_ADDED}, status=200)
             except IntegrityError:
-                return JsonResponse({"message": "Role name already exists"}, status=400)
-        return JsonResponse({"message": "Role name is required"}, status=400)
+                return JsonResponse({"message": MESSAGE_EXISTS}, status=400)
+        return JsonResponse({"message": MESSAGE_REQUIRED}, status=400)
 
-    return JsonResponse({"message": "Invalid request method"}, status=405)
+    return JsonResponse({"message": MESSAGE_INVALID_METHOD}, status=405)
