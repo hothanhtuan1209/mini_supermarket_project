@@ -14,6 +14,16 @@ class Role(models.Model):
     role_id = models.AutoField(primary_key=True)
     role_name = models.CharField(max_length=50, unique=True)
 
+    def __str__(self):
+        """
+        Return a string representation of the Role object.
+        """
+
+        if isinstance(self.role_name, str):
+            return self.role_name
+        else:
+            return str(self.role_name)
+
 
 class Account(models.Model):
     """
