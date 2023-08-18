@@ -12,7 +12,7 @@ class Role(models.Model):
     """
 
     role_id = models.AutoField(primary_key=True)
-    role_name = models.CharField(max_length=50)
+    role_name = models.CharField(max_length=50, unique=True)
 
 
 class Account(models.Model):
