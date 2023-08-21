@@ -1,5 +1,11 @@
-# Constant for message
-MESSAGE_ADDED = "Added successfully"
-MESSAGE_EXISTS = "Name already exists"
-MESSAGE_REQUIRED = "Name is required"
-MESSAGE_INVALID_METHOD = "Invalid request method"
+# Message for add anythings successfully
+ADDED = "Added successfully"
+
+# Message if name already exists
+EXISTS = "Name already exists"
+
+# Message if any field is left blank
+REQUIRED = "Field is required"
+
+# Request method error message
+INVALID_METHOD = "Invalid request method"
