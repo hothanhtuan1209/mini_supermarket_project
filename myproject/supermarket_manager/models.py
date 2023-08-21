@@ -7,12 +7,22 @@ class Role(models.Model):
     A class representing different roles within the system.
 
     Attributes:
-        role_id (CharField): The unique identifier for the role.
+        role_id (AutoField): The unique identifier for the role.
         role_name (CharField): The name of the role.
     """
 
     role_id = models.AutoField(primary_key=True)
-    role_name = models.CharField(max_length=50)
+    role_name = models.CharField(max_length=50, unique=True)
+
+    def __str__(self):
+        """
+        Return a string representation of the Role object.
+        """
+
+        if isinstance(self.role_name, str):
+            return self.role_name
+        else:
+            return str(self.role_name)
 
 
 class Account(models.Model):
@@ -57,7 +67,7 @@ class Permission(models.Model):
     A class representing different permissions within the system.
 
     Attributes:
-        permission_id (CharField): The unique identifier for the permission.
+        permission_id (AutoField): The unique identifier for the permission.
         permission_name (CharField): The name of the permission.
         description (CharField): A description of the permission.
     """
@@ -72,11 +82,11 @@ class Role_Permission(models.Model):
     A class representing the relationship between roles and permissions.
 
     Attributes:
-        role_permission_id (CharField): The unique identifier for the role-permission relationship.
+        role_permission_id (AutoField): The unique identifier for the role-permission relationship.
         role_id (ForeignKey): The role associated with the relationship.
         permission_id (ForeignKey): The permission associated with the relationship.
     """
 
-    role_permission_id = models.CharField(primary_key=True, max_length=5)
+    role_permission_id = models.AutoField(primary_key=True)
     role_id = models.ForeignKey(Role, on_delete=models.CASCADE)
     permission_id = models.ForeignKey(Permission, on_delete=models.CASCADE)
