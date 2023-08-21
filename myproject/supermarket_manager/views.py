@@ -2,7 +2,7 @@ from django.http import JsonResponse
 from django.db.utils import IntegrityError
 from django.views.decorators.csrf import csrf_exempt
 from .models import Role
-from .constants import ADDED, EXISTS, REQUIRED, INVALID_METHOD, UPDATED, NOT_FOUND 
+from .constants import ADDED, EXISTS, REQUIRED, INVALID_METHOD, UPDATED, NOT_FOUND
 import json
 
 
@@ -46,11 +46,13 @@ def list_roles(request):
         JsonResponse: A JSON response containing the list of roles.
     """
 
-    if request.method == 'GET':
+    if request.method == "GET":
         roles = Role.objects.all()
-        role_data = [{"role_id": role.role_id, "role_name": role.role_name} for role in roles]
+        role_data = [
+            {"role_id": role.role_id, "role_name": role.role_name} for role in roles
+        ]
         return JsonResponse({"roles": role_data}, status=200)
-   
+
     return JsonResponse({"message": INVALID_METHOD}, status=405)
 
 
@@ -76,7 +78,6 @@ def update_role(request, role_id):
     if request.method == "PUT":
         data = json.loads(request.body)
         role_name = data.get("role_name", None)
-
 
         if role_name is not None:
             try:
