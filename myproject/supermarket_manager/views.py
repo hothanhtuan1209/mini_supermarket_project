@@ -45,9 +45,7 @@ def list_roles(request):
     """
     API endpoint to retrieve a list of roles from the database.
 
-
     This function handles GET requests to retrieve a list of roles from the database.
-
 
     Returns:
         JsonResponse: A JSON response containing the list of roles.
@@ -68,11 +66,9 @@ def update_role(request, role_id):
     """
     API endpoint to update the name of a role.
 
-
     Parameters:
         request: The HTTP request object.
         role_id: The id of the role to be updated.
-
 
     Returns:
         JsonResponse: A JSON response indicating the result of the update.
