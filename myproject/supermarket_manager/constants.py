@@ -9,3 +9,9 @@ REQUIRED = "Field is required"
 
 # Request method error message
 INVALID_METHOD = "Invalid request method"
+
+# Message for update anythings successfully
+UPDATED = "Updates successfully"
+
+# Message not found information
+NOT_FOUND = "Not found"
