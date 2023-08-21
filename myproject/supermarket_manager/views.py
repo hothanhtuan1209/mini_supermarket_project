@@ -2,7 +2,14 @@ from django.http import JsonResponse
 from django.db.utils import IntegrityError
 from django.views.decorators.csrf import csrf_exempt
 from .models import Role
-from .constants import ADDED, EXISTS, REQUIRED, INVALID_METHOD, UPDATED, NOT_FOUND
+from .constants import (
+    ADDED,
+    EXISTS,
+    REQUIRED,
+    INVALID_METHOD,
+    UPDATED,
+    NOT_FOUND
+)
 import json
 
 
