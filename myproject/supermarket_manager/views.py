@@ -9,7 +9,7 @@ from .constants import (
     INVALID_METHOD,
     UPDATED,
     NOT_FOUND,
-    DELETED
+    DELETED,
 )
 import json
 
@@ -96,8 +96,6 @@ def update_role(request, role_id):
     return JsonResponse({"message": INVALID_METHOD}, status=405)
 
 
-
-
 @csrf_exempt
 def delete_role(request, role_id):
     """
@@ -110,6 +108,7 @@ def delete_role(request, role_id):
     Returns:
         JsonResponse: A JSON response indicating the result of the delete operation.
     """
+
     if request.method == "DELETE":
         try:
             role = Role.objects.get(role_id=role_id)
