@@ -113,7 +113,7 @@ def delete_role(request, role_id):
         try:
             role = Role.objects.get(role_id=role_id)
             role.delete()
-            return JsonResponse({"message": DELETED}, status=200)
+            return JsonResponse({"message": DELETED}, status=204)
         except Role.DoesNotExist:
             return JsonResponse({"message": NOT_FOUND}, status=404)
 
