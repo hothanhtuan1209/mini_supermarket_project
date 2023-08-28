@@ -42,7 +42,7 @@ def add_role(request):
     return JsonResponse({"message": INVALID_METHOD}, status=405)
 
 
-def list_roles(request):
+def get_roles(request):
     """
     API endpoint to retrieve a list of roles from the database.
 
