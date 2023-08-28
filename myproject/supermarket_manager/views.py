@@ -137,12 +137,16 @@ def add_permission(request):
         description = data.get("description", None)
 
         if permission_name is not None and description is not None:
-            existing_permission = Permission.objects.filter(permission_name=permission_name).first()
+            existing_permission = Permission.objects.filter(
+                permission_name=permission_name
+            ).first()
 
             if existing_permission:
                 return JsonResponse({"message": EXISTS}, status=400)
             try:
-                permission = Permission(permission_name=permission_name, description=description)
+                permission = Permission(
+                    permission_name=permission_name, description=description
+                )
                 permission.save()
                 return JsonResponse({"message": ADDED}, status=201)
             except Exception as e:
@@ -163,12 +167,54 @@ def get_permissions(request):
     Returns:
         JsonResponse: A JSON response containing the list of permissions.
     """
-    
-    if request.method == 'GET':
+
+    if request.method == "GET":
         permissions = Permission.objects.all()
         permission_data = [
-            {"permission_id": permission.permission_id, "permission_name": permission.permission_name, "description": permission.description} for permission in permissions
+            {
+                "permission_id": permission.permission_id,
+                "permission_name": permission.permission_name,
+                "description": permission.description,
+            }
+            for permission in permissions
         ]
         return JsonResponse({"permissions": permission_data}, status=200)
-    
+
+    return JsonResponse({"message": INVALID_METHOD}, status=405)
+
+
+@csrf_exempt
+def update_permission(request, permission_id):
+    """
+    API endpoint to update a permission in the database.
+
+    This function handles PUT requests to update the information of a permission in the database.
+    The permission ID should be provided in the URL.
+    The updated permission data should be provided in the JSON data of the request.
+
+    Parameter:
+        permission_id (int): The ID of the permission to be updated.
+
+    Returns:
+        JsonResponse: A JSON response indicating the result of the update operation.
+    """
+
+    if request.method == "PUT":
+        try:
+            permission = Permission.objects.get(permission_id=permission_id)
+            data = json.loads(request.body)
+
+            permission_name = data.get("permission_name", permission.permission_name)
+            description = data.get("description", permission.description)
+
+            permission.permission_name = permission_name
+            permission.description = description
+            permission.save()
+
+            return JsonResponse({"message": UPDATED}, status=200)
+        except Permission.DoesNotExist:
+            return JsonResponse({"message": NOT_FOUND}, status=404)
+        except Exception as e:
+            return JsonResponse({"message": str(e)}, status=400)
+
     return JsonResponse({"message": INVALID_METHOD}, status=405)
