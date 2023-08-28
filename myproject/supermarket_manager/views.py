@@ -9,7 +9,6 @@ from .constants import (
     INVALID_METHOD,
     UPDATED,
     NOT_FOUND,
-    DELETED,
 )
 import json
 
@@ -113,7 +112,7 @@ def delete_role(request, role_id):
         try:
             role = Role.objects.get(role_id=role_id)
             role.delete()
-            return JsonResponse({"message": DELETED}, status=204)
+            return JsonResponse(status=204)
         except Role.DoesNotExist:
             return JsonResponse({"message": NOT_FOUND}, status=404)
 
