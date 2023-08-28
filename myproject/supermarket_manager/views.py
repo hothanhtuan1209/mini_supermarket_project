@@ -169,4 +169,6 @@ def get_permissions(request):
         permission_data = [
             {"permission_id": permission.permission_id, "permission_name": permission.permission_name, "description": permission.description} for permission in permissions
         ]
-        return JsonResponse({"permissions": permission_data})
+        return JsonResponse({"permissions": permission_data}, status=200)
+    
+    return JsonResponse({"message": INVALID_METHOD}, status=405)
