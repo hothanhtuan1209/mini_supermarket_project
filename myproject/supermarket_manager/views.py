@@ -34,7 +34,7 @@ def add_role(request):
             try:
                 role = Role(role_name=role_name)
                 role.save()
-                return JsonResponse({"message": ADDED}, status=200)
+                return JsonResponse({"message": ADDED}, status=201)
             except IntegrityError:
                 return JsonResponse({"message": EXISTS}, status=400)
         return JsonResponse({"message": REQUIRED}, status=400)
