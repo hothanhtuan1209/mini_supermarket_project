@@ -1,7 +1,7 @@
 from django.http import JsonResponse
 from django.db.utils import IntegrityError
 from django.views.decorators.csrf import csrf_exempt
-from .models import Role
+from .models import Role, Permission
 from .constants import (
     ADDED,
     EXISTS,
@@ -117,3 +117,56 @@ def delete_role(request, role_id):
             return JsonResponse({"message": NOT_FOUND}, status=404)
 
     return JsonResponse({"message": INVALID_METHOD}, status=405)
+
+
+@csrf_exempt
+def add_permission(request):
+    """
+    API endpoint to add a new permission to the database.
+
+    This function handles POST requests to add a new permission to the database.
+    The permission name and description must be provided in the JSON data of the request.
+
+    Returns:
+        JsonResponse: A JSON response indicating the result of the add operation.
+    """
+
+    if request.method == "POST":
+        data = json.loads(request.body)
+        permission_name = data.get("permission_name", None)
+        description = data.get("description", None)
+
+        if permission_name is not None and description is not None:
+            existing_permission = Permission.objects.filter(permission_name=permission_name).first()
+
+            if existing_permission:
+                return JsonResponse({"message": EXISTS}, status=400)
+            try:
+                permission = Permission(permission_name=permission_name, description=description)
+                permission.save()
+                return JsonResponse({"message": ADDED}, status=201)
+            except Exception as e:
+                return JsonResponse({"message": EXISTS}, status=400)
+
+        else:
+            return JsonResponse({"message": REQUIRED}, status=400)
+
+    return JsonResponse({"message": INVALID_METHOD}, status=405)
+
+
+def get_permissions(request):
+    """
+    API endpoint to retrieve a list of permissions from the database.
+
+    This function handles GET requests to retrieve a list of permissions from the database.
+
+    Returns:
+        JsonResponse: A JSON response containing the list of permissions.
+    """
+    
+    if request.method == 'GET':
+        permissions = Permission.objects.all()
+        permission_data = [
+            {"permission_id": permission.permission_id, "permission_name": permission.permission_name, "description": permission.description} for permission in permissions
+        ]
+        return JsonResponse({"permissions": permission_data})
