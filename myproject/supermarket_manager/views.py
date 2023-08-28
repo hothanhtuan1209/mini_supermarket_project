@@ -8,7 +8,7 @@ from .constants import (
     REQUIRED,
     INVALID_METHOD,
     UPDATED,
-    NOT_FOUND
+    NOT_FOUND,
 )
 import json
 
@@ -33,7 +33,7 @@ def add_role(request):
             try:
                 role = Role(role_name=role_name)
                 role.save()
-                return JsonResponse({"message": ADDED}, status=200)
+                return JsonResponse({"message": ADDED}, status=201)
             except IntegrityError:
                 return JsonResponse({"message": EXISTS}, status=400)
         return JsonResponse({"message": REQUIRED}, status=400)
@@ -41,7 +41,7 @@ def add_role(request):
     return JsonResponse({"message": INVALID_METHOD}, status=405)
 
 
-def list_roles(request):
+def get_roles(request):
     """
     API endpoint to retrieve a list of roles from the database.
 
@@ -91,5 +91,29 @@ def update_role(request, role_id):
             except Role.DoesNotExist:
                 return JsonResponse({"message": NOT_FOUND}, status=404)
         return JsonResponse({"message": REQUIRED}, status=400)
+
+    return JsonResponse({"message": INVALID_METHOD}, status=405)
+
+
+@csrf_exempt
+def delete_role(request, role_id):
+    """
+    API endpoint to delete a role from the database.
+
+    Parameters:
+        request: The HTTP request object.
+        role_id (str): The ID of the role to be deleted.
+
+    Returns:
+        JsonResponse: A JSON response indicating the result of the delete operation.
+    """
+
+    if request.method == "DELETE":
+        try:
+            role = Role.objects.get(role_id=role_id)
+            role.delete()
+            return JsonResponse(status=204)
+        except Role.DoesNotExist:
+            return JsonResponse({"message": NOT_FOUND}, status=404)
 
     return JsonResponse({"message": INVALID_METHOD}, status=405)

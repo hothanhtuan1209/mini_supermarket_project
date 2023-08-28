@@ -15,3 +15,6 @@ UPDATED = "Updates successfully"
 
 # Message not found information
 NOT_FOUND = "Not found"
+
+# Message for delete successfully
+DELETED = "Delete successfully"
