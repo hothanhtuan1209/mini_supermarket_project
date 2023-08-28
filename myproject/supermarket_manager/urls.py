@@ -5,7 +5,8 @@ from .views import (
     update_role,
     delete_role,
     add_permission,
-    get_permissions
+    get_permissions,
+    update_permission
 )
 
 urlpatterns = [
@@ -15,4 +16,5 @@ urlpatterns = [
     path("api/roles/<str:role_id>", delete_role, name="delete-role"),
     path("api/permissions/adds", add_permission, name="add-permission"),
     path('api/permissions/get_permission', get_permissions, name='get-permission'),
+    path("api/permission/updates/<str:permission_id>", update_permission, name="update-permission"),
 ]
