@@ -88,6 +88,8 @@ def update_role(request, role_id):
                 role.role_name = role_name
                 role.save()
                 return JsonResponse({"message": UPDATED}, status=200)
+            except IntegrityError:
+                return JsonResponse({"message": EXISTS}, status=400)
             except Role.DoesNotExist:
                 return JsonResponse({"message": NOT_FOUND}, status=404)
         return JsonResponse({"message": REQUIRED}, status=400)
@@ -137,21 +139,14 @@ def add_permission(request):
         description = data.get("description", None)
 
         if permission_name is not None and description is not None:
-            existing_permission = Permission.objects.filter(
-                permission_name=permission_name
-            ).first()
-
-            if existing_permission:
-                return JsonResponse({"message": EXISTS}, status=400)
             try:
                 permission = Permission(
                     permission_name=permission_name, description=description
                 )
                 permission.save()
                 return JsonResponse({"message": ADDED}, status=201)
-            except Exception as e:
+            except IntegrityError:
                 return JsonResponse({"message": EXISTS}, status=400)
-
         else:
             return JsonResponse({"message": REQUIRED}, status=400)
 
@@ -214,6 +209,8 @@ def update_permission(request, permission_id):
             return JsonResponse({"message": UPDATED}, status=200)
         except Permission.DoesNotExist:
             return JsonResponse({"message": NOT_FOUND}, status=404)
+        except IntegrityError:
+            return JsonResponse({"message": EXISTS}, status=400)
         except Exception as e:
             return JsonResponse({"message": str(e)}, status=400)
 
