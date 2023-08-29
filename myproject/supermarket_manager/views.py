@@ -215,3 +215,37 @@ def update_permission(request, permission_id):
             return JsonResponse({"message": str(e)}, status=400)
 
     return JsonResponse({"message": INVALID_METHOD}, status=405)
+
+
+@csrf_exempt
+def toggle_status(request, permission_id):
+    """
+    Toggle the status of a permission.
+
+    This function handles PUT requests to toggle the status of a permission identified by its permission_id.
+    If the permission is currently active (status "A"), it will be toggled to "D" (disabled), and vice versa.
+
+    Parameters:
+        request (HttpRequest): The HTTP request object.
+        permission_id (int): The ID of the permission to toggle the status.
+
+    Returns:
+        JsonResponse: A JSON response indicating the result of the toggle status operation
+    """
+    
+    if request.method == "PUT":
+        try:
+            permission = Permission.objects.get(permission_id=permission_id)
+        
+            if permission.status == "A":
+                permission.status == "D"
+            else:
+                permission.status == "A"
+            permission.save()
+            
+            return JsonResponse (status=204)
+        
+        except:
+            return JsonResponse ({"message": NOT_FOUND}, status=404)
+    
+    return JsonResponse ({"message":INVALID_METHOD}, status=400)
