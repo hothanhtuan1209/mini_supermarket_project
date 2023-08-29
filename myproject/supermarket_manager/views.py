@@ -239,14 +239,14 @@ def toggle_status(request, permission_id):
             permission = Permission.objects.get(permission_id=permission_id)
 
             if permission.status == "A":
-                permission.status == "D"
+                permission.status = "D"
             else:
-                permission.status == "A"
+                permission.status = "A"
             permission.save()
 
             return JsonResponse(status=204)
 
-        except:
+        except Permission.DoesNotExist:
             return JsonResponse({"message": NOT_FOUND}, status=404)
 
     return JsonResponse({"message": INVALID_METHOD}, status=400)
