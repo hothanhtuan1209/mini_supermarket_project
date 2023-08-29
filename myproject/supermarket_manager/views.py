@@ -170,6 +170,7 @@ def get_permissions(request):
                 "permission_id": permission.permission_id,
                 "permission_name": permission.permission_name,
                 "description": permission.description,
+                "status": permission.status,
             }
             for permission in permissions
         ]
@@ -232,20 +233,20 @@ def toggle_status(request, permission_id):
     Returns:
         JsonResponse: A JSON response indicating the result of the toggle status operation
     """
-    
+
     if request.method == "PUT":
         try:
             permission = Permission.objects.get(permission_id=permission_id)
-        
+
             if permission.status == "A":
                 permission.status == "D"
             else:
                 permission.status == "A"
             permission.save()
-            
-            return JsonResponse (status=204)
-        
+
+            return JsonResponse(status=204)
+
         except:
-            return JsonResponse ({"message": NOT_FOUND}, status=404)
-    
-    return JsonResponse ({"message":INVALID_METHOD}, status=400)
+            return JsonResponse({"message": NOT_FOUND}, status=404)
+
+    return JsonResponse({"message": INVALID_METHOD}, status=400)
