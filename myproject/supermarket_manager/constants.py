@@ -18,3 +18,9 @@ NOT_FOUND = "Not found"
 
 # Message for delete successfully
 DELETED = "Delete successfully"
+
+# Choice status
+STATUS_CHOICES = [
+    ("A", "Active"),
+    ("D", "Disable")
+]
