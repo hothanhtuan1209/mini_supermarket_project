@@ -1,5 +1,6 @@
 from django.db import models
 from django.core.validators import MinLengthValidator, RegexValidator
+from .constants import STATUS_CHOICES
 
 
 class Role(models.Model):
@@ -55,18 +56,9 @@ class Account(models.Model):
         validators=[RegexValidator(r"^0\d{9}$")], max_length=10
     )
 
-    GENDER_CHOICES = [
-        ("M", "Male"),
-        ("F", "Female"),
-        ("O", "Other")
-    ]
+    GENDER_CHOICES = [("M", "Male"), ("F", "Female"), ("O", "Other")]
     gender = models.CharField(max_length=1, choices=GENDER_CHOICES)
-
-    STATUS_CHOICES = [
-        ("A", "Active"),
-        ("D", "Disable")
-    ]
-    status = models.CharField(max_length=1, choices=STATUS_CHOICES)
+    status = models.CharField(max_length=1, choices=STATUS_CHOICES, default="A")
 
 
 class Permission(models.Model):
@@ -82,11 +74,6 @@ class Permission(models.Model):
     permission_id = models.AutoField(primary_key=True)
     permission_name = models.CharField(max_length=100, unique=True)
     description = models.CharField(max_length=100)
-
-    STATUS_CHOICES = [
-        ("A", "Active"),
-        ("D", "Disable")
-    ]
     status = models.CharField(max_length=1, choices=STATUS_CHOICES, default="A")
 
 
