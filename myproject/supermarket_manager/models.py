@@ -73,7 +73,7 @@ class Permission(models.Model):
     """
 
     permission_id = models.AutoField(primary_key=True)
-    permission_name = models.CharField(max_length=100)
+    permission_name = models.CharField(max_length=100, unique=True)
     description = models.CharField(max_length=100)
 
 
