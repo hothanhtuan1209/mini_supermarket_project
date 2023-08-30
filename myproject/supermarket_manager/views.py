@@ -1,7 +1,7 @@
 from django.http import JsonResponse
 from django.db.utils import IntegrityError
 from django.views.decorators.csrf import csrf_exempt
-from .models import Role, Permission
+from .models import Role, Permission, Role_Permission
 from .constants import (
     ADDED,
     EXISTS,
@@ -9,6 +9,7 @@ from .constants import (
     INVALID_METHOD,
     UPDATED,
     NOT_FOUND,
+    ASSIGN
 )
 import json
 
@@ -221,4 +222,42 @@ def update_permission(request, permission_id):
         except Exception as e:
             return JsonResponse({"message": str(e)}, status=400)
 
+    return JsonResponse({"message": INVALID_METHOD}, status=405)
+
+
+@csrf_exempt
+def assign_permission(request):
+    """
+    API endpoint to assign a permission to a role.
+
+    This function handles POST requests to assign a permission to a role in the Role_Permission table.
+    The role ID and permission ID should be provided in the JSON data of the request.
+
+    Returns:
+        JsonResponse: A JSON response indicating the result of the assignment.
+    """
+
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        role_id = data.get('role_id', None)
+        permission_id = data.get('permission_id', None)
+       
+        if role_id is not None and permission_id is not None:
+            try:
+                role = Role.objects.get(pk=role_id)
+                permission = Permission.objects.get(pk=permission_id)
+               
+                role_permission = Role_Permission(role_id=role, permission_id=permission)
+                role_permission.save()
+               
+                return JsonResponse({"message": ASSIGN}, status=200)
+            except Role.DoesNotExist:
+                return JsonResponse({"message": NOT_FOUND}, status=404)
+            except Permission.DoesNotExist:
+                return JsonResponse({"message": NOT_FOUND}, status=404)
+            except Exception as e:
+                return JsonResponse({"message": str(e)}, status=400)
+       
+        return JsonResponse({"message": REQUIRED}, status=400)
+   
     return JsonResponse({"message": INVALID_METHOD}, status=405)
