@@ -75,10 +75,10 @@ class Permission(models.Model):
     permission_name = models.CharField(max_length=100, unique=True)
     description = models.CharField(max_length=100)
     status = models.CharField(max_length=1, choices=STATUS_CHOICES, default="A")
-    
+
     def __str__(self):
         """
-        Return a string representation of the Role object.
+        Return a string representation of the Permission object.
         """
 
         if isinstance(self.permission_name, str):
