@@ -205,7 +205,6 @@ def update_permission(request, permission_id):
                     permission.status = "D"
                 else:
                     permission.status = "A"
-                permission.save()
 
             permission_name = data.get("permission_name", permission.permission_name)
             description = data.get("description", permission.description)
