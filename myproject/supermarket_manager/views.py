@@ -170,6 +170,7 @@ def get_permissions(request):
                 "permission_id": permission.permission_id,
                 "permission_name": permission.permission_name,
                 "description": permission.description,
+                "status": permission.status,
             }
             for permission in permissions
         ]
@@ -191,13 +192,19 @@ def update_permission(request, permission_id):
         permission_id (int): The ID of the permission to be updated.
 
     Returns:
-        JsonResponse: A JSON response indicating the result of the update operation.
+        JsonResponse: A JSON response indicating the result of the operation.
     """
 
     if request.method == "PUT":
         try:
             permission = Permission.objects.get(permission_id=permission_id)
             data = json.loads(request.body)
+
+            if "status" in data:
+                if permission.status == "A":
+                    permission.status = "D"
+                else:
+                    permission.status = "A"
 
             permission_name = data.get("permission_name", permission.permission_name)
             description = data.get("description", permission.description)
