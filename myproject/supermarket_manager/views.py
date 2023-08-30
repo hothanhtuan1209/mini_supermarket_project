@@ -250,7 +250,7 @@ def assign_permission(request):
                 role_permission = Role_Permission(role_id=role, permission_id=permission)
                 role_permission.save()
                
-                return JsonResponse({"message": ASSIGN}, status=200)
+                return JsonResponse({"message": ASSIGN}, status=201)
             except Role.DoesNotExist:
                 return JsonResponse({"message": NOT_FOUND}, status=404)
             except Permission.DoesNotExist:
