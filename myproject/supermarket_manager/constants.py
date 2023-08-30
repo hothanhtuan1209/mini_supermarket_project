@@ -24,3 +24,6 @@ STATUS_CHOICES = [
     ("A", "Active"),
     ("D", "Disable")
 ]
+
+# Message for assigned successfully
+ASSIGN = "Assign successfully"
