@@ -1,7 +1,7 @@
 from django.http import JsonResponse
 from django.db.utils import IntegrityError
 from django.views.decorators.csrf import csrf_exempt
-from .models import Role, Permission, Role_Permission
+from .models import (Role, Permission, Role_Permission)
 from .constants import (
     ADDED,
     EXISTS,
