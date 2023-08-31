@@ -27,3 +27,15 @@ STATUS_CHOICES = [
 
 # Message for assigned successfully
 ASSIGN = "Assign successfully"
+
+# Message not found role when add account
+NOT_FOUND_ROLE = "Role not found"
+
+# Message login_name or email exists
+LG_MAIL_EXISTS = "Login name or email already exists"
+
+# Message invalid phone number format
+PHONE_FORMAT = "Invalid phone number format"
+
+# Message password less than 8 characters
+PASS_NOT_ENOUGH =  "Password must be at least 8 characters"
