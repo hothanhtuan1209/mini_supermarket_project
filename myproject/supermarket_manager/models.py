@@ -3,6 +3,32 @@ from django.core.validators import MinLengthValidator, RegexValidator
 from .constants import STATUS_CHOICES
 
 
+class Permission(models.Model):
+    """
+    A class representing different permissions within the system.
+
+    Attributes:
+        permission_id (AutoField): The unique identifier for the permission.
+        permission_name (CharField): The name of the permission.
+        description (CharField): A description of the permission.
+    """
+
+    permission_id = models.AutoField(primary_key=True)
+    permission_name = models.CharField(max_length=100, unique=True)
+    description = models.CharField(max_length=100)
+    status = models.CharField(max_length=1, choices=STATUS_CHOICES, default="A")
+
+    def __str__(self):
+        """
+        Return a string representation of the Permission object.
+        """
+
+        if isinstance(self.permission_name, str):
+            return self.permission_name
+        else:
+            return str(self.permission_name)
+
+
 class Role(models.Model):
     """
     A class representing different roles within the system.
@@ -14,6 +40,7 @@ class Role(models.Model):
 
     role_id = models.AutoField(primary_key=True)
     role_name = models.CharField(max_length=50, unique=True)
+    permission = models.ManyToManyField(Permission)
 
     def __str__(self):
         """
@@ -59,32 +86,6 @@ class Account(models.Model):
     GENDER_CHOICES = [("M", "Male"), ("F", "Female"), ("O", "Other")]
     gender = models.CharField(max_length=1, choices=GENDER_CHOICES)
     status = models.CharField(max_length=1, choices=STATUS_CHOICES, default="A")
-
-
-class Permission(models.Model):
-    """
-    A class representing different permissions within the system.
-
-    Attributes:
-        permission_id (AutoField): The unique identifier for the permission.
-        permission_name (CharField): The name of the permission.
-        description (CharField): A description of the permission.
-    """
-
-    permission_id = models.AutoField(primary_key=True)
-    permission_name = models.CharField(max_length=100, unique=True)
-    description = models.CharField(max_length=100)
-    status = models.CharField(max_length=1, choices=STATUS_CHOICES, default="A")
-
-    def __str__(self):
-        """
-        Return a string representation of the Permission object.
-        """
-
-        if isinstance(self.permission_name, str):
-            return self.permission_name
-        else:
-            return str(self.permission_name)
 
 
 class Role_Permission(models.Model):
