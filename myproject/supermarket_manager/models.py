@@ -22,11 +22,7 @@ class Permission(models.Model):
         """
         Return a string representation of the Permission object.
         """
-
-        if isinstance(self.permission_name, str):
-            return self.permission_name
-        else:
-            return str(self.permission_name)
+        return str(self.permission_name)
 
 
 class Role(models.Model):
