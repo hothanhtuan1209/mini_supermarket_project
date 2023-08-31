@@ -40,7 +40,7 @@ class Role(models.Model):
 
     role_id = models.AutoField(primary_key=True)
     role_name = models.CharField(max_length=50, unique=True)
-    permission = models.ManyToManyField(Permission, through='Role_Permission')
+    permission = models.ManyToManyField(Permission, through="Role_Permission")
 
     def __str__(self):
         """
@@ -71,7 +71,7 @@ class Account(models.Model):
         status (CharField): The status of the account.
     """
 
-    account_id = models.CharField(primary_key=True, max_length=5)
+    account_id = models.AutoField(primary_key=True)
     user_name = models.CharField(max_length=100)
     login_name = models.CharField(max_length=100, unique=True)
     password = models.CharField(max_length=30, validators=[MinLengthValidator(8)])
@@ -96,6 +96,7 @@ class Account(models.Model):
             return self.user_name
         else:
             return str(self.user_name)
+
 
 class Role_Permission(models.Model):
     """
