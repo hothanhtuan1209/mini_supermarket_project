@@ -54,9 +54,8 @@ class Account(models.Model):
     A class representing user accounts.
 
     Attributes:
-        account_id (CharField): The unique identifier for the account.
+        account_id (AutoField): The unique identifier for the account.
         user_name (CharField): The name of the user.
-        login_name (CharField): The login name of the user.
         password (CharField): The password for the account.
         role_id (ForeignKey): The role associated with the account.
         birth_day (DateField): The user's birth date.
