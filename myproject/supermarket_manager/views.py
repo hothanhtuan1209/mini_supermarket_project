@@ -294,7 +294,10 @@ def add_account(request):
     """
 
 
-    if request.method == "POST":
+    if request.method != "POST":
+        return JsonResponse({"message": INVALID_METHOD}, status=405)
+    
+    else:
         data = json.loads(request.body)
            
         user_name = data.get("user_name", None)
@@ -307,6 +310,12 @@ def add_account(request):
         phone_number = data.get("phone_number", None)
         gender = data.get("gender", None)
 
+        if not re.match(r'^0\d{9}$', phone_number):
+            return JsonResponse({"message": PHONE_FORMAT}, status=400)  
+
+        if len(raw_password) < 8:
+            return JsonResponse({"message": PASS_NOT_ENOUGH}, status=400)     
+
         if (
             user_name
             and login_name
@@ -318,11 +327,6 @@ def add_account(request):
             and phone_number
             and gender
         ):
-            if not re.match(r'^0\d{9}$', phone_number):
-                return JsonResponse({"message": PHONE_FORMAT}, status=400)
-               
-            if len(raw_password) < 8:
-                return JsonResponse({"message": PASS_NOT_ENOUGH}, status=400)
                
             try:
                 hashed_password = make_password(raw_password)
@@ -348,5 +352,3 @@ def add_account(request):
                 return JsonResponse({"message": LG_MAIL_EXISTS}, status=400)
 
         return JsonResponse({"message": REQUIRED}, status=400)
-
-    return JsonResponse({"message": INVALID_METHOD}, status=405)
