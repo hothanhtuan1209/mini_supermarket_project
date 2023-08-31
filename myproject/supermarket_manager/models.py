@@ -87,11 +87,7 @@ class Account(models.Model):
         """
         Return a string representation of the Account object.
         """
-
-        if isinstance(self.user_name, str):
-            return self.user_name
-        else:
-            return str(self.user_name)
+        return str(self.user_name)
 
 
 class Role_Permission(models.Model):
