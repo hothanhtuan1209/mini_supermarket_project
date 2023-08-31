@@ -318,7 +318,6 @@ def add_account(request):
 
         if (
             user_name
-            and login_name
             and raw_password
             and role_id
             and birth_day
@@ -334,7 +333,6 @@ def add_account(request):
 
                 account = Account(
                     user_name=user_name,
-                    login_name=login_name,
                     password=hashed_password,
                     role_id=role,
                     birth_day=birth_day,
