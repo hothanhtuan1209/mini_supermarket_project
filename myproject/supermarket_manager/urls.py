@@ -20,5 +20,5 @@ urlpatterns = [
     path('api/permissions/get_permission', get_permissions, name='get-permission'),
     path("api/permissions/updates/<str:permission_id>", update_permission, name="update-permission"),
     path("api/assign-permissions", assign_permission, name="assign-permission"),
-    path("api/account/adds", add_account, name="add-account"),
+    path("api/accounts", add_account, name="add-account"),
 ]
