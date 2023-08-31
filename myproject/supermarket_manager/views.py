@@ -13,7 +13,6 @@ from .constants import (
     NOT_FOUND,
     ASSIGN,
     NOT_FOUND_ROLE,
-    EMAIL_EXISTS,
     PHONE_FORMAT,
     PASS_NOT_ENOUGH
 )
@@ -344,7 +343,5 @@ def add_account(request):
             
             except Role.DoesNotExist:
                 return JsonResponse({"message": NOT_FOUND_ROLE}, status=400)
-            except IntegrityError:
-                return JsonResponse({"message": EMAIL_EXISTS}, status=400)
 
         return JsonResponse({"message": REQUIRED}, status=400)
