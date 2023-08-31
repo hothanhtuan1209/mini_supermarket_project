@@ -1,7 +1,9 @@
 from django.http import JsonResponse
 from django.db.utils import IntegrityError
 from django.views.decorators.csrf import csrf_exempt
-from .models import (Role, Permission, Role_Permission)
+from .models import (Role, Permission, Role_Permission, Account)
+import re
+from django.contrib.auth.hashers import make_password
 from .constants import (
     ADDED,
     EXISTS,
@@ -9,7 +11,11 @@ from .constants import (
     INVALID_METHOD,
     UPDATED,
     NOT_FOUND,
-    ASSIGN
+    ASSIGN,
+    NOT_FOUND_ROLE,
+    LG_MAIL_EXISTS,
+    PHONE_FORMAT,
+    PASS_NOT_ENOUGH
 )
 import json
 
@@ -260,4 +266,88 @@ def assign_permission(request):
        
         return JsonResponse({"message": REQUIRED}, status=400)
    
+    return JsonResponse({"message": INVALID_METHOD}, status=405)
+
+
+@csrf_exempt
+def add_account(request):
+    """
+    API endpoint to add a new account to the database
+
+    This function handles POST requests to add a new account to the database.
+
+    Attributes:
+        account_id (AutoField): The unique identifier for the account.
+        user_name (CharField): The name of the user.
+        login_name (CharField): The login name of the user.
+        password (CharField): The password for the account.
+        role_id (ForeignKey): The role associated with the account.
+        birth_day (DateField): The user's birth date.
+        address (CharField): The user's address.
+        email(CharField): The user's email
+        phone_number (CharField): The user's phone number.
+        gender (CharField): The gender of the user.
+        status (CharField): The status of the account.
+
+    Returns:
+        JsonResponse: A JSON response indicating a result of the add operation
+    """
+
+
+    if request.method == "POST":
+        data = json.loads(request.body)
+           
+        user_name = data.get("user_name", None)
+        login_name = data.get("login_name", None)
+        raw_password = data.get("password", None)
+        role_id = data.get("role_id", None)
+        birth_day = data.get("birth_day", None)
+        address = data.get("address", None)
+        email = data.get("email", None)
+        phone_number = data.get("phone_number", None)
+        gender = data.get("gender", None)
+
+        if (
+            user_name
+            and login_name
+            and raw_password
+            and role_id
+            and birth_day
+            and address
+            and email
+            and phone_number
+            and gender
+        ):
+            if not re.match(r'^0\d{9}$', phone_number):
+                return JsonResponse({"message": PHONE_FORMAT}, status=400)
+               
+            if len(raw_password) < 8:
+                return JsonResponse({"message": PASS_NOT_ENOUGH}, status=400)
+               
+            try:
+                hashed_password = make_password(raw_password)
+                role = Role.objects.get(role_id=role_id)
+
+                account = Account(
+                    user_name=user_name,
+                    login_name=login_name,
+                    password=hashed_password,
+                    role_id=role,
+                    birth_day=birth_day,
+                    address=address,
+                    email=email,
+                    phone_number=phone_number,
+                    gender=gender,
+                )
+                account.save()
+                
+                return JsonResponse({"message": ADDED}, status=201)
+            except Role.DoesNotExist:
+                return JsonResponse({"message": NOT_FOUND_ROLE}, status=400)
+            except IntegrityError:
+                return JsonResponse({"message": LG_MAIL_EXISTS}, status=400)
+
+        else:
+            return JsonResponse({"message": REQUIRED}, status=400)
+
     return JsonResponse({"message": INVALID_METHOD}, status=405)
