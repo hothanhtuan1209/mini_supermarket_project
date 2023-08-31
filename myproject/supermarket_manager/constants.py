@@ -32,7 +32,7 @@ ASSIGN = "Assign successfully"
 NOT_FOUND_ROLE = "Role not found"
 
 # Message login_name or email exists
-LG_MAIL_EXISTS = "Login name or email already exists"
+EMAIL_EXISTS = "Email already exists"
 
 # Message invalid phone number format
 PHONE_FORMAT = "Invalid phone number format"
