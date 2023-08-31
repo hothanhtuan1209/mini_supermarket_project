@@ -69,12 +69,11 @@ class Account(models.Model):
 
     account_id = models.AutoField(primary_key=True)
     user_name = models.CharField(max_length=100)
-    login_name = models.CharField(max_length=100, unique=True)
     password = models.CharField(max_length=30, validators=[MinLengthValidator(8)])
     role_id = models.ForeignKey(Role, on_delete=models.CASCADE)
     birth_day = models.DateField()
     address = models.CharField(max_length=255)
-    email = models.CharField(max_length=100, unique=True)
+    email = models.CharField(max_length=100)
     phone_number = models.CharField(
         validators=[RegexValidator(r"^0\d{9}$")], max_length=10
     )
