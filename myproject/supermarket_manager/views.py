@@ -300,7 +300,6 @@ def add_account(request):
         data = json.loads(request.body)
            
         user_name = data.get("user_name", None)
-        login_name = data.get("login_name", None)
         raw_password = data.get("password", None)
         role_id = data.get("role_id", None)
         birth_day = data.get("birth_day", None)
