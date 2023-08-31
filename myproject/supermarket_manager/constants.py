@@ -31,9 +31,6 @@ ASSIGN = "Assign successfully"
 # Message not found role when add account
 NOT_FOUND_ROLE = "Role not found"
 
-# Message login_name or email exists
-EMAIL_EXISTS = "Email already exists"
-
 # Message invalid phone number format
 PHONE_FORMAT = "Invalid phone number format"
 
