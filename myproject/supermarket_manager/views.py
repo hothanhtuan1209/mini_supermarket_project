@@ -340,14 +340,13 @@ def add_account(request):
                     gender=gender,
                 )
                 account.save()
-                
                 return JsonResponse({"message": ADDED}, status=201)
+            
             except Role.DoesNotExist:
                 return JsonResponse({"message": NOT_FOUND_ROLE}, status=400)
             except IntegrityError:
                 return JsonResponse({"message": LG_MAIL_EXISTS}, status=400)
 
-        else:
-            return JsonResponse({"message": REQUIRED}, status=400)
+        return JsonResponse({"message": REQUIRED}, status=400)
 
     return JsonResponse({"message": INVALID_METHOD}, status=405)
