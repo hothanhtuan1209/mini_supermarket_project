@@ -278,7 +278,7 @@ def add_account(request):
     Attributes:
         account_id (AutoField): The unique identifier for the account.
         user_name (CharField): The name of the user.
-        password (CharField): The password for the account.
+        raw_password (CharField): The password for the account.
         role_id (ForeignKey): The role associated with the account.
         birth_day (DateField): The user's birth date.
         address (CharField): The user's address.
@@ -292,12 +292,36 @@ def add_account(request):
     """
 
 
+@csrf_exempt
+def add_account(request):
+    """
+    API endpoint to add a new account to the database
+
+    This function handles POST requests to add a new account to the database.
+    
+    Attributes:
+        account_id (AutoField): The unique identifier for the account.
+        user_name (CharField): The name of the user.
+        password (CharField): The password for the account.
+        role_id (ForeignKey): The role associated with the account.
+        birth_day (DateField): The user's birth date.
+        address (CharField): The user's address.
+        email(CharField): The user's email
+        phone_number (CharField): The user's phone number.
+        gender (CharField): The gender of the user.
+        status (CharField): The status of the account.
+    
+    Returns:
+        JsonResponse: A JSON response indicating a result of the add operation
+    """
+
+
     if request.method != "POST":
         return JsonResponse({"message": INVALID_METHOD}, status=405)
-    
+
     else:
         data = json.loads(request.body)
-           
+
         user_name = data.get("user_name", None)
         raw_password = data.get("password", None)
         role_id = data.get("role_id", None)
@@ -310,7 +334,7 @@ def add_account(request):
         if not re.match(r'^0\d{9}$', phone_number):
             return JsonResponse({"message": PHONE_FORMAT}, status=400)  
 
-        if len(raw_password) < 8:
+        if raw_password is not None and len(raw_password) < 8:
             return JsonResponse({"message": PASS_NOT_ENOUGH}, status=400)     
 
         if (
@@ -323,7 +347,7 @@ def add_account(request):
             and phone_number
             and gender
         ):
-               
+
             try:
                 hashed_password = make_password(raw_password)
                 role = Role.objects.get(role_id=role_id)
@@ -340,7 +364,7 @@ def add_account(request):
                 )
                 account.save()
                 return JsonResponse({"message": ADDED}, status=201)
-            
+
             except Role.DoesNotExist:
                 return JsonResponse({"message": NOT_FOUND_ROLE}, status=400)
 
