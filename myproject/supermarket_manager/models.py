@@ -1,6 +1,8 @@
 from django.db import models
 from django.core.validators import MinLengthValidator, RegexValidator
 from .constants import STATUS_CHOICES
+import random
+import string
 
 
 class Permission(models.Model):
@@ -66,7 +68,6 @@ class Account(models.Model):
         status (CharField): The status of the account.
     """
 
-    account_id = models.AutoField(primary_key=True)
     user_name = models.CharField(max_length=100)
     password = models.CharField(max_length=30, validators=[MinLengthValidator(8)])
     role_id = models.ForeignKey(Role, on_delete=models.CASCADE)
@@ -80,6 +81,16 @@ class Account(models.Model):
     GENDER_CHOICES = [("M", "Male"), ("F", "Female"), ("O", "Other")]
     gender = models.CharField(max_length=1, choices=GENDER_CHOICES)
     status = models.CharField(max_length=1, choices=STATUS_CHOICES, default="A")
+
+    def random_account_id(self):
+        while True:
+            account_id = ''.join(random.choices(string.digits, k=5))
+            if not Account.objects.filter(account_id=account_id).exists():
+                return account_id
+
+    account_id = models.CharField(
+        primary_key=True, max_length=5, unique=True
+    )
 
     def __str__(self):
         """
