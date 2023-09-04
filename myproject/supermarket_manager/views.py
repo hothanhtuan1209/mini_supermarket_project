@@ -386,7 +386,7 @@ def get_account_detail(request, account_id):
     - 'email': The user's email address.
     - 'phone_number': The user's phone number.
     - 'gender': The user's gender (displayed as 'Male', 'Female', or 'Other').
-    - 'status': The status of the user account (displayed as 'Active' or 'Inactive').
+    - 'status': The status of the user account (displayed as 'Active' or 'Disable').
 
     Parameters:
         request (HttpRequest): The HTTP request object.
