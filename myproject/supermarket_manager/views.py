@@ -4,6 +4,7 @@ from django.views.decorators.csrf import csrf_exempt
 from .models import (Role, Permission, Role_Permission, Account)
 import re
 from django.contrib.auth.hashers import make_password
+from django.contrib.auth import authenticate, login
 from .constants import (
     ADDED,
     EXISTS,
@@ -15,6 +16,9 @@ from .constants import (
     NOT_FOUND_ROLE,
     PHONE_FORMAT,
     PASS_NOT_ENOUGH,
+    LOGIN,
+    INCORRECT,
+    REQUIRED_LOGIN,
 )
 import json
 
@@ -384,3 +388,39 @@ def get_account_detail(request, account_id):
         return JsonResponse(account_data, status=200)
     except Account.DoesNotExist:
         return JsonResponse({"message": NOT_FOUND}, status=404)
+
+
+@csrf_exempt
+def login_account(request):
+    """
+    API endpoint for user login.
+
+    This function handles POST requests for user login. Users can log in using their email
+    and password. If either the email or password is missing, it returns a 400 Bad Request
+    response. If the login credentials are incorrect, it returns a 401 Unauthorized response.
+
+    Parameters:
+        request (HttpRequest): The HTTP request object containing user login credentials.
+
+    Returns:
+        JsonResponse: A JSON response indicating the result of the login attempt.
+    """
+
+    if request.method == "POST":
+        data = json.loads(request.body)
+        email = data.get("email", None)
+        password = data.get("password", None)
+
+        if not email or not password:
+            return JsonResponse({"message": REQUIRED_LOGIN}, status=400)
+
+        user = authenticate(request, email=email, password=password)
+
+        if user is not None:
+            login(request, user)
+            return JsonResponse({"message": LOGIN}, status=200)
+        else:
+            return JsonResponse({"message": INCORRECT}, status=401)
+   
+    else:
+        return JsonResponse({"message": INVALID_METHOD }, status=405)
