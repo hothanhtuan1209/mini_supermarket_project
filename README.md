@@ -22,8 +22,8 @@ This is a project to build mini supermarket management software, including Accou
  >git clone git@github.com:hothanhtuan1209/mini_supermarket_project.git
 
 2. Next, move into the directory containing this file:
- >cd training_python
- >cd Django
+ >cd mini_supermarket_project
+ >cd myproject
 
 3. Checkout to branch develop
 > git checkout develop
