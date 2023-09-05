@@ -25,5 +25,21 @@ STATUS_CHOICES = [
     ("D", "Disable")
 ]
 
+# Choice gender
+GENDER_CHOICES = [
+    ("M", "Male"),
+    ("F", "Female"),
+    ("O", "Other")
+]
+
 # Message for assigned successfully
 ASSIGN = "Assign successfully"
+
+# Message not found role when add account
+NOT_FOUND_ROLE = "Role not found"
+
+# Message invalid phone number format
+PHONE_FORMAT = "Invalid phone number format"
+
+# Message password less than 8 characters
+PASS_NOT_ENOUGH =  "Password must be at least 8 characters"

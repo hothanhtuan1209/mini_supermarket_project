@@ -1,6 +1,8 @@
 from django.db import models
 from django.core.validators import MinLengthValidator, RegexValidator
-from .constants import STATUS_CHOICES
+from .constants import (STATUS_CHOICES, GENDER_CHOICES)
+import random
+import string
 
 
 class Permission(models.Model):
@@ -22,11 +24,7 @@ class Permission(models.Model):
         """
         Return a string representation of the Permission object.
         """
-
-        if isinstance(self.permission_name, str):
-            return self.permission_name
-        else:
-            return str(self.permission_name)
+        return str(self.permission_name)
 
 
 class Role(models.Model):
@@ -40,7 +38,7 @@ class Role(models.Model):
 
     role_id = models.AutoField(primary_key=True)
     role_name = models.CharField(max_length=50, unique=True)
-    permission = models.ManyToManyField(Permission, through='Role_Permission')
+    permission = models.ManyToManyField(Permission, through="Role_Permission")
 
     def __str__(self):
         """
@@ -58,9 +56,8 @@ class Account(models.Model):
     A class representing user accounts.
 
     Attributes:
-        account_id (CharField): The unique identifier for the account.
+        account_id (charField): The unique identifier for the account.
         user_name (CharField): The name of the user.
-        login_name (CharField): The login name of the user.
         password (CharField): The password for the account.
         role_id (ForeignKey): The role associated with the account.
         birth_day (DateField): The user's birth date.
@@ -71,9 +68,10 @@ class Account(models.Model):
         status (CharField): The status of the account.
     """
 
-    account_id = models.CharField(primary_key=True, max_length=5)
+    account_id = models.CharField(
+        primary_key=True, max_length=5, unique=True
+    )
     user_name = models.CharField(max_length=100)
-    login_name = models.CharField(max_length=100)
     password = models.CharField(max_length=30, validators=[MinLengthValidator(8)])
     role_id = models.ForeignKey(Role, on_delete=models.CASCADE)
     birth_day = models.DateField()
@@ -83,9 +81,20 @@ class Account(models.Model):
         validators=[RegexValidator(r"^0\d{9}$")], max_length=10
     )
 
-    GENDER_CHOICES = [("M", "Male"), ("F", "Female"), ("O", "Other")]
-    gender = models.CharField(max_length=1, choices=GENDER_CHOICES)
+    gender = models.CharField(max_length=1, choices=GENDER_CHOICES, default="M")
     status = models.CharField(max_length=1, choices=STATUS_CHOICES, default="A")
+
+    def __str__(self):
+        """
+        Return a string representation of the Account object.
+        """
+        return str(self.user_name)
+    
+    def random_account_id(self):
+        while True:
+            account_id = ''.join(random.choices(string.digits, k=5))
+            if not Account.objects.filter(account_id=account_id).exists():
+                return account_id
 
 
 class Role_Permission(models.Model):

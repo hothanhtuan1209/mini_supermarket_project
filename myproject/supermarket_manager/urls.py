@@ -8,6 +8,8 @@ from .views import (
     get_permissions,
     update_permission,
     assign_permission,
+    add_account,
+    get_account_detail,
 )
 
 urlpatterns = [
@@ -18,5 +20,7 @@ urlpatterns = [
     path("api/permissions/adds", add_permission, name="add-permission"),
     path('api/permissions/get_permission', get_permissions, name='get-permission'),
     path("api/permissions/updates/<str:permission_id>", update_permission, name="update-permission"),
-    path("api/assign-permissions", assign_permission, name="assign-permission")
+    path("api/assign-permissions", assign_permission, name="assign-permission"),
+    path("api/accounts", add_account, name="add-account"),
+    path("api/accounts/<str:account_id>", get_account_detail, name="get-account-detail"),
 ]

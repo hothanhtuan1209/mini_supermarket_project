@@ -1,7 +1,9 @@
 from django.http import JsonResponse
 from django.db.utils import IntegrityError
 from django.views.decorators.csrf import csrf_exempt
-from .models import (Role, Permission, Role_Permission)
+from .models import (Role, Permission, Role_Permission, Account)
+import re
+from django.contrib.auth.hashers import make_password
 from .constants import (
     ADDED,
     EXISTS,
@@ -9,7 +11,10 @@ from .constants import (
     INVALID_METHOD,
     UPDATED,
     NOT_FOUND,
-    ASSIGN
+    ASSIGN,
+    NOT_FOUND_ROLE,
+    PHONE_FORMAT,
+    PASS_NOT_ENOUGH,
 )
 import json
 
@@ -261,3 +266,121 @@ def assign_permission(request):
         return JsonResponse({"message": REQUIRED}, status=400)
    
     return JsonResponse({"message": INVALID_METHOD}, status=405)
+
+
+@csrf_exempt
+def add_account(request):
+    """
+    API endpoint to add a new account to the database
+
+    This function handles POST requests to add a new account to the database.
+    
+    Attributes:
+        account_id (CharField): The unique identifier for the account.
+        user_name (CharField): The name of the user.
+        password (CharField): The password for the account.
+        role_id (ForeignKey): The role associated with the account.
+        birth_day (DateField): The user's birth date.
+        address (CharField): The user's address.
+        email(CharField): The user's email
+        phone_number (CharField): The user's phone number.
+        gender (CharField): The gender of the user.
+        status (CharField): The status of the account.
+    
+    Returns:
+        JsonResponse: A JSON response indicating a result of the add operation
+    """
+
+
+    if request.method != "POST":
+        return JsonResponse({"message": INVALID_METHOD}, status=405)
+
+    data = json.loads(request.body)
+
+    user_name = data.get("user_name", None)
+    raw_password = data.get("password", None)
+    role_id = data.get("role_id", None)
+    birth_day = data.get("birth_day", None)
+    address = data.get("address", None)
+    email = data.get("email", None)
+    phone_number = data.get("phone_number", None)
+
+    if not re.match(r'^0\d{9}$', phone_number):
+        return JsonResponse({"message": PHONE_FORMAT}, status=400)  
+
+    if raw_password is not None and len(raw_password) < 8:
+        return JsonResponse({"message": PASS_NOT_ENOUGH}, status=400)     
+
+    if (
+        user_name
+        and raw_password
+        and role_id
+        and birth_day
+        and address
+        and email
+        and phone_number
+    ):
+
+        try:
+            hashed_password = make_password(raw_password)
+            role = Role.objects.get(role_id=role_id)
+            account = Account()
+            account.account_id = account.random_account_id()
+            account.user_name = user_name
+            account.user_name = user_name
+            account.password = hashed_password
+            account.role_id = role
+            account.birth_day = birth_day
+            account.address = address
+            account.email = email
+            account.phone_number = phone_number
+            account.save()
+            return JsonResponse({"message": ADDED}, status=201)
+
+        except Role.DoesNotExist:
+            return JsonResponse({"message": NOT_FOUND_ROLE}, status=400)
+
+    return JsonResponse({"message": REQUIRED}, status=400)
+
+
+def get_account_detail(request, account_id):
+    """
+    API endpoint to retrieve detailed information about a specific user account.
+
+    This function handles GET requests to retrieve detailed information about a user account
+    based on the provided `account_id`. It returns a JSON response with the following details:
+
+    - 'user_name': The name of the user.
+    - 'role': The role associated with the user account.
+    - 'birth_day': The user's birth date in the format 'YYYY-MM-DD'.
+    - 'address': The user's address.
+    - 'email': The user's email address.
+    - 'phone_number': The user's phone number.
+    - 'gender': The user's gender (displayed as 'Male', 'Female', or 'Other').
+    - 'status': The status of the user account (displayed as 'Active' or 'Disable').
+
+    Parameters:
+        request (HttpRequest): The HTTP request object.
+        account_id (str): The unique identifier of the user account to retrieve.
+
+    Returns:
+        JsonResponse: A JSON response containing the user account details if found,
+        or a JSON response with a 'message' field indicating 'NOT_FOUND' and a status code of 404
+        if the account is not found in the database.
+    """
+        
+    try:
+        account = Account.objects.get(account_id=account_id)
+        account_data = {
+            'user_name': account.user_name,
+            'role': account.role_id.role_name,
+            'birth_day': account.birth_day.strftime('%Y-%m-%d'),
+            'address': account.address,
+            'email': account.email,
+            'phone_number': account.phone_number,
+            'gender': account.get_gender_display(),
+            'status': account.get_status_display(),
+        }
+        return JsonResponse(account_data, status=200)
+    except Account.DoesNotExist:
+        return JsonResponse({"message": NOT_FOUND}, status=404)
