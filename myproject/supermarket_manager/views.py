@@ -4,7 +4,6 @@ from django.views.decorators.csrf import csrf_exempt
 from .models import (Role, Permission, Role_Permission, Account)
 import re
 from django.contrib.auth.hashers import make_password
-from django.contrib.auth import authenticate, login
 from .constants import (
     ADDED,
     EXISTS,
