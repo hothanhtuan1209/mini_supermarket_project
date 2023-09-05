@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from django.core.validators import MinLengthValidator, RegexValidator
 from .constants import (STATUS_CHOICES, GENDER_CHOICES)
 import random
@@ -51,7 +52,34 @@ class Role(models.Model):
             return str(self.role_name)
 
 
-class Account(models.Model):
+class AccountManager(BaseUserManager):
+    """
+    Custom manager for the Account model.
+
+    This manager provides methods for creating user accounts and superuser accounts.
+
+    Attributes:
+        BaseUserManager: The base manager class provided by Django.
+    """
+    
+    def create_user(self, email, user_name, password=None, **extra_fields):
+        if not email:
+            raise ValueError('The Email field must be set')
+        email = self.normalize_email(email)
+        user = self.model(email=email, user_name=user_name, **extra_fields)
+        user.set_password(password)
+        user.save(using=self._db)
+        
+        return user
+
+    def create_superuser(self, email, user_name, password=None, **extra_fields):
+        extra_fields.setdefault('is_staff', True)
+        extra_fields.setdefault('is_superuser', True)
+
+        return self.create_user(email, user_name, password, **extra_fields)
+
+
+class Account(AbstractBaseUser, PermissionsMixin):
     """
     A class representing user accounts.
 
@@ -76,13 +104,22 @@ class Account(models.Model):
     role_id = models.ForeignKey(Role, on_delete=models.CASCADE)
     birth_day = models.DateField()
     address = models.CharField(max_length=255)
-    email = models.CharField(max_length=100)
+    email = models.CharField(max_length=100, unique=True)
     phone_number = models.CharField(
         validators=[RegexValidator(r"^0\d{9}$")], max_length=10
     )
 
     gender = models.CharField(max_length=1, choices=GENDER_CHOICES, default="M")
     status = models.CharField(max_length=1, choices=STATUS_CHOICES, default="A")
+
+    is_active = models.BooleanField(default=True)
+    is_staff = models.BooleanField(default=False)
+
+    REQUIRED_FIELDS = ['user_name', 'birth_day', 'address', 'phone_number', 'gender', 'status']
+    USERNAME_FIELD = 'email'
+
+    objects = AccountManager()
+
 
     def __str__(self):
         """
