@@ -16,8 +16,6 @@ from .constants import (
     NOT_FOUND_ROLE,
     PHONE_FORMAT,
     PASS_NOT_ENOUGH,
-    LOGIN,
-    INCORRECT,
 )
 import json
 
@@ -308,7 +306,6 @@ def add_account(request):
         address = data.get("address", None)
         email = data.get("email", None)
         phone_number = data.get("phone_number", None)
-        gender = data.get("gender", None)
 
         if not re.match(r'^0\d{9}$', phone_number):
             return JsonResponse({"message": PHONE_FORMAT}, status=400)  
@@ -324,7 +321,6 @@ def add_account(request):
             and address
             and email
             and phone_number
-            and gender
         ):
 
             try:
@@ -340,7 +336,6 @@ def add_account(request):
                 account.address = address
                 account.email = email
                 account.phone_number = phone_number
-                account.gender = gender
                 account.save()
                 return JsonResponse({"message": ADDED}, status=201)
 
