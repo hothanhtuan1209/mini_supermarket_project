@@ -11,6 +11,7 @@ class EmailBackend(ModelBackend):
     This backend allows users to authenticate using their email address
     and password, instead of the default username and password.
     """
+
     def authenticate(self, request, email=None, password=None, **kwargs):
         try:
             user = Account.objects.get(email=email)
