@@ -1,6 +1,6 @@
 from django.db import models
 from django.core.validators import MinLengthValidator, RegexValidator
-from .constants import STATUS_CHOICES
+from .constants import (STATUS_CHOICES, GENDER_CHOICES)
 import random
 import string
 
@@ -78,8 +78,7 @@ class Account(models.Model):
         validators=[RegexValidator(r"^0\d{9}$")], max_length=10
     )
 
-    GENDER_CHOICES = [("M", "Male"), ("F", "Female"), ("O", "Other")]
-    gender = models.CharField(max_length=1, choices=GENDER_CHOICES)
+    gender = models.CharField(max_length=1, choices=GENDER_CHOICES, default="M")
     status = models.CharField(max_length=1, choices=STATUS_CHOICES, default="A")
 
     def random_account_id(self):
