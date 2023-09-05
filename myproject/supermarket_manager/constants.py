@@ -25,6 +25,13 @@ STATUS_CHOICES = [
     ("D", "Disable")
 ]
 
+# Choice gender
+GENDER_CHOICES = [
+    ("M", "Male"),
+    ("F", "Female"),
+    ("O", "Other")
+]
+
 # Message for assigned successfully
 ASSIGN = "Assign successfully"
 
