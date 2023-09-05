@@ -4,7 +4,7 @@ from django.views.decorators.csrf import csrf_exempt
 from .models import (Role, Permission, Role_Permission, Account)
 import re
 from django.contrib.auth.hashers import make_password
-from django.contrib.auth import authenticate
+from django.contrib.auth import authenticate, login
 from .constants import (
     ADDED,
     EXISTS,
@@ -15,7 +15,9 @@ from .constants import (
     ASSIGN,
     NOT_FOUND_ROLE,
     PHONE_FORMAT,
-    PASS_NOT_ENOUGH
+    PASS_NOT_ENOUGH,
+    LOGIN,
+    INCORRECT,
 )
 import json
 
@@ -267,30 +269,6 @@ def assign_permission(request):
         return JsonResponse({"message": REQUIRED}, status=400)
    
     return JsonResponse({"message": INVALID_METHOD}, status=405)
-
-
-@csrf_exempt
-def add_account(request):
-    """
-    API endpoint to add a new account to the database
-
-    This function handles POST requests to add a new account to the database.
-
-    Attributes:
-        account_id (AutoField): The unique identifier for the account.
-        user_name (CharField): The name of the user.
-        raw_password (CharField): The password for the account.
-        role_id (ForeignKey): The role associated with the account.
-        birth_day (DateField): The user's birth date.
-        address (CharField): The user's address.
-        email(CharField): The user's email
-        phone_number (CharField): The user's phone number.
-        gender (CharField): The gender of the user.
-        status (CharField): The status of the account.
-
-    Returns:
-        JsonResponse: A JSON response indicating a result of the add operation
-    """
 
 
 @csrf_exempt
