@@ -276,7 +276,7 @@ def add_account(request):
     This function handles POST requests to add a new account to the database.
     
     Attributes:
-        account_id (AutoField): The unique identifier for the account.
+        account_id (CharField): The unique identifier for the account.
         user_name (CharField): The name of the user.
         password (CharField): The password for the account.
         role_id (ForeignKey): The role associated with the account.
