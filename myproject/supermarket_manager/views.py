@@ -1,6 +1,6 @@
 from django.http import JsonResponse
 from django.db.utils import IntegrityError
-from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.csrf import csrf_exempt, csrf_protect
 from .models import (Role, Permission, Role_Permission, Account)
 import re
 from django.contrib.auth.hashers import make_password
@@ -272,7 +272,7 @@ def assign_permission(request):
     return JsonResponse({"message": INVALID_METHOD}, status=405)
 
 
-@csrf_exempt
+@csrf_protect
 def add_account(request):
     """
     API endpoint to add a new account to the database
@@ -282,7 +282,7 @@ def add_account(request):
     Attributes:
         account_id (CharField): The unique identifier for the account.
         user_name (CharField): The name of the user.
-        password (CharField): The password for the account.
+        password (TextField): The password for the account.
         role_id (ForeignKey): The role associated with the account.
         birth_day (DateField): The user's birth date.
         address (CharField): The user's address.
@@ -390,7 +390,7 @@ def get_account_detail(request, account_id):
         return JsonResponse({"message": NOT_FOUND}, status=404)
 
 
-@csrf_exempt
+@csrf_protect
 def login_account(request):
     """
     API endpoint for user login.
