@@ -18,12 +18,12 @@ This is a project to build mini supermarket management software, including Accou
  >pip install django 
 
 ## How to use
- 1. First, clone this repository on your computer
- >git clone git@github.com:hothanhtuan1209/mini_supermarket_project.git
+1. First, clone this repository on your computer
+>git clone git@github.com:hothanhtuan1209/mini_supermarket_project.git
 
 2. Next, move into the directory containing this file:
- >cd training_python
- >cd Django
+>cd training_python
+>cd Django
 
 3. Checkout to branch develop
 > git checkout develop
@@ -32,8 +32,17 @@ This is a project to build mini supermarket management software, including Accou
 > py manage.py migrate
 
 5. Running server
- >py manage.py server
+>py manage.py server
  - Go to Web browser and search localhost:8000
+
+6. Create new Role and Permission first
+ - Roles and permissions need to be created before the account
+
+7. Create superuser
+> py manage.py createsuperuser
+
+8. Login superuser account
+ - Log in with account superuser to check the newly created Roles and Permissions
  
  ## Contribute
  - If you want to contribute to this project, please create a pull request and clearly describe the changes you propose
