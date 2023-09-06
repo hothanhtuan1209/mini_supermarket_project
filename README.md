@@ -42,7 +42,7 @@ This is a project to build mini supermarket management software, including Accou
 > py manage.py createsuperuser
 
 8. Login superuser account
- - Log in with account superuser to check the newly created Roles and Permissions
+ - Login with account superuser to check the newly created Roles and Permissions
  
  ## Contribute
  - If you want to contribute to this project, please create a pull request and clearly describe the changes you propose
