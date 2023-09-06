@@ -86,7 +86,7 @@ class Account(AbstractBaseUser, PermissionsMixin):
     Attributes:
         account_id (charField): The unique identifier for the account.
         user_name (CharField): The name of the user.
-        password (CharField): The password for the account.
+        password (TextField): The password for the account.
         role_id (ForeignKey): The role associated with the account.
         birth_day (DateField): The user's birth date.
         address (CharField): The user's address.
@@ -100,7 +100,7 @@ class Account(AbstractBaseUser, PermissionsMixin):
         primary_key=True, max_length=5, unique=True
     )
     user_name = models.CharField(max_length=100)
-    password = models.CharField(max_length=30, validators=[MinLengthValidator(8)])
+    password = models.TextField(validators=[MinLengthValidator(8)])
     role_id = models.ForeignKey(Role, on_delete=models.CASCADE)
     birth_day = models.DateField()
     address = models.CharField(max_length=255)
