@@ -16,10 +16,10 @@ class Permission(models.Model):
         description (CharField): A description of the permission.
     """
 
-    permission_id = models.AutoField(primary_key=True)
+    permission_id   = models.AutoField(primary_key=True)
     permission_name = models.CharField(max_length=100, unique=True)
-    description = models.CharField(max_length=100)
-    status = models.CharField(max_length=1, choices=STATUS_CHOICES, default="A")
+    description     = models.CharField(max_length=100)
+    status          = models.CharField(max_length=1, choices=STATUS_CHOICES, default="A")
 
     def __str__(self):
         """
@@ -37,8 +37,8 @@ class Role(models.Model):
         role_name (CharField): The name of the role.
     """
 
-    role_id = models.AutoField(primary_key=True)
-    role_name = models.CharField(max_length=50, unique=True)
+    role_id    = models.AutoField(primary_key=True)
+    role_name  = models.CharField(max_length=50, unique=True)
     permission = models.ManyToManyField(Permission, through="Role_Permission")
 
     def __str__(self):
@@ -67,7 +67,7 @@ class AccountManager(BaseUserManager):
             raise ValueError('The Email field must be set')
         
         email = self.normalize_email(email)
-        user = self.model(email=email, user_name=user_name, **extra_fields)
+        user  = self.model(email=email, user_name=user_name, **extra_fields)
         user.set_password(password)
         user.save(using=self._db)
         
@@ -97,15 +97,15 @@ class Account(AbstractBaseUser, PermissionsMixin):
         status (CharField): The status of the account.
     """
 
-    account_id = models.CharField(
+    account_id   = models.CharField(
         primary_key=True, max_length=5, unique=True
     )
-    user_name = models.CharField(max_length=100)
-    password = models.TextField(validators=[MinLengthValidator(8)])
-    role_id = models.ForeignKey(Role, on_delete=models.CASCADE)
-    birth_day = models.DateField()
-    address = models.CharField(max_length=255)
-    email = models.CharField(max_length=100, unique=True)
+    user_name    = models.CharField(max_length=100)
+    password     = models.TextField(validators=[MinLengthValidator(8)])
+    role_id      = models.ForeignKey(Role, on_delete=models.CASCADE)
+    birth_day    = models.DateField()
+    address      = models.CharField(max_length=255)
+    email        = models.CharField(max_length=100, unique=True)
     phone_number = models.CharField(
         validators=[RegexValidator(r"^0\d{9}$")], max_length=10
     )
@@ -146,5 +146,5 @@ class Role_Permission(models.Model):
     """
 
     role_permission_id = models.AutoField(primary_key=True)
-    role_id = models.ForeignKey(Role, on_delete=models.CASCADE)
-    permission_id = models.ForeignKey(Permission, on_delete=models.CASCADE)
+    role_id            = models.ForeignKey(Role, on_delete=models.CASCADE)
+    permission_id      = models.ForeignKey(Permission, on_delete=models.CASCADE)
