@@ -33,20 +33,17 @@ This is a project to build mini supermarket management software, including Accou
 > py manage.py makemigrations supermarket_manager 
 > py manage.py migrate
 
-5. Create role
-> py manage.py create_role
+5. Create role and permission
+> py manage.py create_permissions_and_role
 
-6. Create permission
-> py manage.py create_permissions
-
-7. Create superuser
+6. Create superuser
 > py manage.py createsuperuser
 
-8. Running server
+7. Running server
 >py manage.py server
  - Go to Web browser and search localhost:8000
 
-9. Login superuser account
+8. Login superuser account
  - Login with account superuser
  
  ## Contribute
