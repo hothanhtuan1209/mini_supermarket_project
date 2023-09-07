@@ -15,7 +15,7 @@ class Command(BaseCommand):
         for permission_name, description in permission_need_create:
             permission, created = Permission.objects.get_or_create(
                 permission_name=permission_name,
-                defaults={'description': description}
+                description=description
             )
 
             if created:
@@ -23,4 +23,4 @@ class Command(BaseCommand):
             else:
                 self.stdout.write(self.style.WARNING(f'Permission {permission_name} already exists'))
 
-            self.stdout.write(self.style.SUCCESS(f'ID: {permission.permission_id}, Name: {permission.permission_name}'))
+            self.stdout.write(self.style.SUCCESS(f'ID: {permission.id}, Name: {permission.permission_name}'))
