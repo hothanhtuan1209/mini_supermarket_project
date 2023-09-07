@@ -5,14 +5,14 @@ class Command(BaseCommand):
     help = "Create custom permission"
 
     def handle(self, *args, **kwargs):
-        permission_need_create = [
+        permission_to_create = [
             ('Read', 'permission to read data'),
             ('Update', 'permission to update data'),
             ('Create', 'permission to create data'),
             ('Delete', 'permission to delete data')
         ]
 
-        for permission_name, description in permission_need_create:
+        for permission_name, description in permission_to_create:
             permission, created = Permission.objects.get_or_create(
                 permission_name=permission_name,
                 description=description
