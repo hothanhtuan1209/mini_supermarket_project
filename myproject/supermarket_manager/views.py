@@ -327,16 +327,16 @@ def add_account(request):
 
         try:
             hashed_password = make_password(raw_password)
-            role = Role.objects.get(role_id=role_id)
+            role            = Role.objects.get(role_id=role_id)
             account = Account()
-            account.account_id = account.random_account_id()
-            account.user_name = user_name
-            account.user_name = user_name
-            account.password = hashed_password
-            account.role_id = role
-            account.birth_day = birth_day
-            account.address = address
-            account.email = email
+            account.account_id   = account.random_account_id()
+            account.user_name    = user_name
+            account.user_name    = user_name
+            account.password     = hashed_password
+            account.role_id      = role
+            account.birth_day    = birth_day
+            account.address      = address
+            account.email        = email
             account.phone_number = phone_number
             account.save()
             return JsonResponse({"message": ADDED}, status=201)
