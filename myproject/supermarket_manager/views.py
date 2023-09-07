@@ -395,9 +395,10 @@ def login_account(request):
     """
     API endpoint for user login.
 
-    This function handles POST requests for user login. Users can log in using their email
-    and password. If either the email or password is missing, it returns a 400 Bad Request
-    response. If the login credentials are incorrect, it returns a 401 Unauthorized response.
+    This function handles POST requests for user login.
+    Users can login using their email and password.
+    If either the email or password is missing, it returns a 400 Bad Request response.
+    If the login credentials are incorrect, it returns a 401 Unauthorized response.
 
     Parameters:
         request (HttpRequest): The HTTP request object containing user login credentials.
