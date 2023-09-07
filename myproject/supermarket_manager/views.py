@@ -406,21 +406,20 @@ def login_account(request):
         JsonResponse: A JSON response indicating the result of the login attempt.
     """
 
-    if request.method == "POST":
-        data = json.loads(request.body)
-        email = data.get("email", None)
-        password = data.get("password", None)
-
-        if not email or not password:
-            return JsonResponse({"message": REQUIRED_LOGIN}, status=400)
-
-        user = authenticate(request, email=email, password=password)
-
-        if user is not None:
-            login(request, user)
-            return JsonResponse({"message": LOGIN}, status=200)
-        else:
-            return JsonResponse({"message": INCORRECT}, status=401)
-   
-    else:
+    if request.method != "POST":
         return JsonResponse({"message": INVALID_METHOD }, status=405)
+    
+    data = json.loads(request.body)
+    email = data.get("email", None)
+    password = data.get("password", None)
+
+    if not email or not password:
+        return JsonResponse({"message": REQUIRED_LOGIN}, status=400)
+
+    user = authenticate(request, email=email, password=password)
+
+    if user is not None:
+        login(request, user)
+        return JsonResponse({"message": LOGIN}, status=200)
+    else:
+        return JsonResponse({"message": INCORRECT}, status=401)
