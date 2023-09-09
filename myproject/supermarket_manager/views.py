@@ -26,13 +26,15 @@ import json
 @csrf_exempt
 def add_role(request):
     """
-    View function to add a new role to the database.
+    Function:
+        - View function to add a new role to the database.
 
-    This function handles POST requests to add a new role to the database.
-    The role name must be provided in the JSON data of the request.
+        - This function handles POST requests to add a new role to the database.
+        - The role name must be provided in the JSON data of the request.
 
-    Returns a JSON response with a success message if the role is added successfully.
-    Returns a JSON response with an error message if the role name already exists or if the request data is invalid.
+    Returns:
+        - JsonResponse with a success message if the role is added successfully.
+        - JsonResponse with an error message if the role name already exists or if the request data is invalid.
     """
 
     if request.method == "POST":
@@ -53,12 +55,13 @@ def add_role(request):
 
 def get_roles(request):
     """
-    API endpoint to retrieve a list of roles from the database.
+    Function:
+        - API endpoint to retrieve a list of roles from the database.
 
-    This function handles GET requests to retrieve a list of roles from the database.
+        - This function handles GET requests to retrieve a list of roles from the database.
 
     Returns:
-        JsonResponse: A JSON response containing the list of roles.
+        - JsonResponse: A JSON response containing the list of roles.
     """
 
     if request.method == "GET":
@@ -74,11 +77,12 @@ def get_roles(request):
 @csrf_exempt
 def update_role(request, role_id):
     """
-    API endpoint to update the name of a role.
+    Function:
+        - API endpoint to update the name of a role.
 
     Parameters:
-        request: The HTTP request object.
-        role_id: The id of the role to be updated.
+        - request: The HTTP request object.
+        - role_id: The id of the role to be updated.
 
     Returns:
         JsonResponse: A JSON response indicating the result of the update.
@@ -110,7 +114,8 @@ def update_role(request, role_id):
 @csrf_exempt
 def delete_role(request, role_id):
     """
-    API endpoint to delete a role from the database.
+    Function:
+        - API endpoint to delete a role from the database.
 
     Parameters:
         request: The HTTP request object.
@@ -134,13 +139,14 @@ def delete_role(request, role_id):
 @csrf_exempt
 def add_permission(request):
     """
-    API endpoint to add a new permission to the database.
+    Function:
+        - API endpoint to add a new permission to the database.
 
-    This function handles POST requests to add a new permission to the database.
-    The permission name and description must be provided in the JSON data of the request.
+        - This function handles POST requests to add a new permission to the database.
+        - The permission name and description must be provided in the JSON data of the request.
 
     Returns:
-        JsonResponse: A JSON response indicating the result of the add operation.
+        - JsonResponse: A JSON response indicating the result of the add operation.
     """
 
     if request.method == "POST":
@@ -165,12 +171,13 @@ def add_permission(request):
 
 def get_permissions(request):
     """
-    API endpoint to retrieve a list of permissions from the database.
+    Function:
+        - API endpoint to retrieve a list of permissions from the database.
 
-    This function handles GET requests to retrieve a list of permissions from the database.
+        - This function handles GET requests to retrieve a list of permissions from the database.
 
     Returns:
-        JsonResponse: A JSON response containing the list of permissions.
+        - JsonResponse: A JSON response containing the list of permissions.
     """
 
     if request.method == "GET":
@@ -192,17 +199,18 @@ def get_permissions(request):
 @csrf_exempt
 def update_permission(request, permission_id):
     """
-    API endpoint to update a permission in the database.
+    Function:
+        - API endpoint to update a permission in the database.
 
-    This function handles PUT requests to update the information of a permission in the database.
-    The permission ID should be provided in the URL.
-    The updated permission data should be provided in the JSON data of the request.
+        - This function handles PUT requests to update the information of a permission in the database.
+        - The permission ID should be provided in the URL.
+        - The updated permission data should be provided in the JSON data of the request.
 
     Parameter:
-        permission_id (int): The ID of the permission to be updated.
+        - permission_id (int): The ID of the permission to be updated.
 
     Returns:
-        JsonResponse: A JSON response indicating the result of the operation.
+        - JsonResponse: A JSON response indicating the result of the operation.
     """
 
     if request.method == "PUT":
@@ -237,13 +245,14 @@ def update_permission(request, permission_id):
 @csrf_exempt
 def assign_permission(request):
     """
-    API endpoint to assign a permission to a role.
+    Function:
+        - API endpoint to assign a permission to a role.
 
-    This function handles POST requests to assign a permission to a role in the Role_Permission table.
-    The role ID and permission ID should be provided in the JSON data of the request.
+        - This function handles POST requests to assign a permission to a role in the Role_Permission table.
+        - The role ID and permission ID should be provided in the JSON data of the request.
 
     Returns:
-        JsonResponse: A JSON response indicating the result of the assignment.
+        - JsonResponse: A JSON response indicating the result of the assignment.
     """
 
     if request.method == 'POST':
@@ -275,24 +284,25 @@ def assign_permission(request):
 @csrf_protect
 def add_account(request):
     """
-    API endpoint to add a new account to the database
+    Function:
+        - API endpoint to add a new account to the database
 
-    This function handles POST requests to add a new account to the database.
+        - This function handles POST requests to add a new account to the database.
     
     Attributes:
-        account_id (CharField): The unique identifier for the account.
-        user_name (CharField): The name of the user.
-        password (TextField): The password for the account.
-        role_id (ForeignKey): The role associated with the account.
-        birth_day (DateField): The user's birth date.
-        address (CharField): The user's address.
-        email(CharField): The user's email
-        phone_number (CharField): The user's phone number.
-        gender (CharField): The gender of the user.
-        status (CharField): The status of the account.
+        - account_id (CharField): The unique identifier for the account.
+        - user_name (CharField): The name of the user.
+        - password (TextField): The password for the account.
+        - role_id (ForeignKey): The role associated with the account.
+        - birth_day (DateField): The user's birth date.
+        - address (CharField): The user's address.
+        - email(CharField): The user's email
+        - phone_number (CharField): The user's phone number.
+        - gender (CharField): The gender of the user.
+        - status (CharField): The status of the account.
     
     Returns:
-        JsonResponse: A JSON response indicating a result of the add operation
+        - JsonResponse: A JSON response indicating a result of the add operation
     """
 
 
@@ -349,26 +359,27 @@ def add_account(request):
 
 def get_account_detail(request, account_id):
     """
-    API endpoint to retrieve detailed information about a specific user account.
+    Function:
+        - API endpoint to retrieve detailed information about a specific user account.
 
-    This function handles GET requests to retrieve detailed information about a user account
-    based on the provided `account_id`. It returns a JSON response with the following details:
+        - This function handles GET requests to retrieve detailed information about a user account
+        based on the provided `account_id`. It returns a JSON response with the following details:
 
-    - 'user_name': The name of the user.
-    - 'role': The role associated with the user account.
-    - 'birth_day': The user's birth date in the format 'YYYY-MM-DD'.
-    - 'address': The user's address.
-    - 'email': The user's email address.
-    - 'phone_number': The user's phone number.
-    - 'gender': The user's gender (displayed as 'Male', 'Female', or 'Other').
-    - 'status': The status of the user account (displayed as 'Active' or 'Disable').
+            + 'user_name': The name of the user.
+            + 'role': The role associated with the user account.
+            + 'birth_day': The user's birth date in the format 'YYYY-MM-DD'.
+            + 'address': The user's address.
+            + 'email': The user's email address.
+            + 'phone_number': The user's phone number.
+            + 'gender': The user's gender (displayed as 'Male', 'Female', or 'Other').
+            + 'status': The status of the user account (displayed as 'Active' or 'Disable').
 
     Parameters:
-        request (HttpRequest): The HTTP request object.
-        account_id (str): The unique identifier of the user account to retrieve.
+        - request (HttpRequest): The HTTP request object.
+        - account_id (str): The unique identifier of the user account to retrieve.
 
     Returns:
-        JsonResponse: A JSON response containing the user account details if found,
+        - JsonResponse: A JSON response containing the user account details if found,
         or a JSON response with a 'message' field indicating 'NOT_FOUND' and a status code of 404
         if the account is not found in the database.
     """
@@ -390,21 +401,22 @@ def get_account_detail(request, account_id):
         return JsonResponse({"message": NOT_FOUND}, status=404)
 
 
-@csrf_protect
+@csrf_exempt
 def login_account(request):
     """
-    API endpoint for user login.
+    Function:
+        - API endpoint for user login.
 
-    This function handles POST requests for user login.
-    Users can login using their email and password.
-    If either the email or password is missing, it returns a 400 Bad Request response.
-    If the login credentials are incorrect, it returns a 401 Unauthorized response.
+        - This function handles POST requests for user login.
+        - Users can login using their email and password.
+        - If either the email or password is missing, it returns a 400 Bad Request response.
+        - If the login credentials are incorrect, it returns a 401 Unauthorized response.
 
     Parameters:
-        request (HttpRequest): The HTTP request object containing user login credentials.
+        - request (HttpRequest): The HTTP request object containing user login credentials.
 
     Returns:
-        JsonResponse: A JSON response indicating the result of the login attempt.
+        - JsonResponse: A JSON response indicating the result of the login attempt.
     """
 
     if request.method != "POST":
