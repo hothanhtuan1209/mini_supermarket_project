@@ -422,5 +422,4 @@ def login_account(request):
     if user is not None:
         login(request, user)
         return JsonResponse({"message": LOGIN}, status=200)
-    else:
-        return JsonResponse({"message": INCORRECT}, status=401)
+    return JsonResponse({"message": INCORRECT}, status=401)
