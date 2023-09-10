@@ -398,6 +398,7 @@ def get_account_detail(request, account_id):
         }
         return JsonResponse(account_data, status=200)
     except Account.DoesNotExist:
+        
         return JsonResponse({"message": NOT_FOUND}, status=404)
 
 
@@ -434,4 +435,5 @@ def login_account(request):
     if user is not None:
         login(request, user)
         return JsonResponse({"message": LOGIN}, status=200)
+    
     return JsonResponse({"message": INCORRECT}, status=401)
