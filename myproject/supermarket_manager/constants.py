@@ -43,3 +43,12 @@ PHONE_FORMAT = "Invalid phone number format"
 
 # Message password less than 8 characters
 PASS_NOT_ENOUGH =  "Password must be at least 8 characters"
+
+# Message for login successfully
+LOGIN = "Login successfully"
+
+# Message for email or password incorrect
+INCORRECT = "Incorrect email or password"
+
+# Message for required email or password
+REQUIRED_LOGIN = "Both email and password are required"
