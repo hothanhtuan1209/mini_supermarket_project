@@ -5,6 +5,8 @@ from .models import (Role, Permission, Role_Permission, Account)
 import re
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth import authenticate, login
+from django.contrib.auth import update_session_auth_hash
+from django.contrib.auth.decorators import login_required
 from .constants import (
     ADDED,
     EXISTS,
@@ -19,6 +21,8 @@ from .constants import (
     LOGIN,
     INCORRECT,
     REQUIRED_LOGIN,
+    CHANGE_PASS,
+    INCORRECT_OLD_PASS
 )
 import json
 
@@ -437,3 +441,97 @@ def login_account(request):
         return JsonResponse({"message": LOGIN}, status=200)
     
     return JsonResponse({"message": INCORRECT}, status=401)
+
+
+@csrf_exempt
+def update_account(request, account_id):
+    """
+    Function:
+        - Update account information.
+
+        - This view allows updating account information such as user name, birth date, address,
+          email, phone number, gender, and status.
+        - The view expects a PUT request with a JSON
+          body containing the fields to be updated.
+
+    Parameters:
+        - request: The HTTP request object.
+        - account_id: The unique identifier of the account to be updated.
+
+    Returns:
+        - JsonResponse: A JSON response indicating the result of the update operation.
+    """
+
+    if request.method != "PUT":
+        return JsonResponse({"message": INVALID_METHOD}, status=405)
+    
+    try:
+        account = Account.objects.get(account_id=account_id)
+
+        data = json.loads(request.body)
+
+        if "status" in data:
+            if account.status == "A":
+                account.status = "D"
+            else:
+                account.status = "A"
+
+        account.user_name = data.get('user_name', account.user_name)
+        account.birth_day = data.get('birth_day', account.birth_day)
+        account.address = data.get('address', account.address)
+        account.email = data.get('email', account.email)
+        account.phone_number = data.get('phone_number', account.phone_number)
+        account.gender = data.get('gender', account.gender)
+
+        account.save()
+
+        return JsonResponse({"message": UPDATED})
+    
+    except Account.DoesNotExist:
+        return JsonResponse({"message": NOT_FOUND}, status=404)
+    
+    except Exception as e:
+        return JsonResponse({"message": str(e)}, status=400)
+
+
+@csrf_exempt
+@login_required(login_url='api/logins')
+def change_password(request, account_id):
+    """
+    Function:
+        - Change account password.
+
+        - This view allows changing the password of the account associated with the provided
+        account_id. It expects a POST request with a JSON body containing the old_password
+        and new_password fields.
+
+    Parameters:
+        - request: The HTTP request object.
+        - account_id: The unique identifier of the account whose password will be changed.
+
+    Returns:
+        - JsonResponse: A JSON response indicating the result of the password change operation.
+    """
+
+    if request.method != "POST":
+        return JsonResponse({"message": INVALID_METHOD}, status=405)
+
+    try:
+        account = Account.objects.get(account_id=account_id)
+        
+        data = json.loads(request.body)
+        old_password = data.get('old_password')
+        new_password = data.get('new_password')
+
+        if account.check_password(old_password):
+            account.set_password(new_password)
+            account.save()
+            update_session_auth_hash(request, account)
+
+            return JsonResponse({"message": CHANGE_PASS})
+        
+        else:
+            return JsonResponse({"message": INCORRECT_OLD_PASS}, status=400)
+
+    except Exception as e:
+        return JsonResponse({"message": str(e)}, status=400)
