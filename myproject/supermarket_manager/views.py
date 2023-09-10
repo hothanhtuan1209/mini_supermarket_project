@@ -467,7 +467,6 @@ def update_account(request, account_id):
     
     try:
         account = Account.objects.get(account_id=account_id)
-
         data = json.loads(request.body)
 
         if "status" in data:
@@ -518,13 +517,14 @@ def change_password(request, account_id):
 
     try:
         account = Account.objects.get(account_id=account_id)
-        
         data = json.loads(request.body)
+
         old_password = data.get('old_password')
         new_password = data.get('new_password')
 
         if account.check_password(old_password):
             account.set_password(new_password)
+            
             account.save()
             update_session_auth_hash(request, account)
 
