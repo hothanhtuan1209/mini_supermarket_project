@@ -52,3 +52,9 @@ INCORRECT = "Incorrect email or password"
 
 # Message for required email or password
 REQUIRED_LOGIN = "Both email and password are required"
+
+# Message for change password
+CHANGE_PASS = "Password changed successfully"
+
+# Message old password incorrect
+INCORRECT_OLD_PASS = "Old password is incorrect"
