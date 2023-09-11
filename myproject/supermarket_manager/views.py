@@ -512,7 +512,7 @@ def change_password(request, account_id):
         - JsonResponse: A JSON response indicating the result of the password change operation.
     """
 
-    if request.method != "POST":
+    if request.method != "PATCH":
         return JsonResponse({"message": INVALID_METHOD}, status=405)
 
     try:
