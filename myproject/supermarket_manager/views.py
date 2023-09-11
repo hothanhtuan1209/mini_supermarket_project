@@ -21,8 +21,8 @@ from .constants import (
     LOGIN,
     INCORRECT,
     REQUIRED_LOGIN,
-    CHANGE_PASS,
-    INCORRECT_OLD_PASS
+    CHANGED_PASSWORD,
+    INCORRECT_OLD_PASSWORD
 )
 import json
 
@@ -528,10 +528,10 @@ def change_password(request, account_id):
             account.save()
             update_session_auth_hash(request, account)
 
-            return JsonResponse({"message": CHANGE_PASS})
+            return JsonResponse({"message": CHANGED_PASSWORD})
         
         else:
-            return JsonResponse({"message": INCORRECT_OLD_PASS}, status=400)
+            return JsonResponse({"message": INCORRECT_OLD_PASSWORD}, status=400)
 
     except Exception as e:
         return JsonResponse({"message": str(e)}, status=400)
