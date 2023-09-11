@@ -28,7 +28,6 @@ import json
 
 
 @csrf_exempt
-@login_required(login_url='api/logins')
 def add_role(request):
     """
     Function:
@@ -58,7 +57,6 @@ def add_role(request):
     return JsonResponse({"message": INVALID_METHOD}, status=405)
 
 
-@login_required(login_url='api/logins')
 def get_roles(request):
     """
     Function:
@@ -81,7 +79,6 @@ def get_roles(request):
 
 
 @csrf_exempt
-@login_required(login_url='api/logins')
 def update_role(request, role_id):
     """
     Function:
@@ -119,7 +116,6 @@ def update_role(request, role_id):
 
 
 @csrf_exempt
-@login_required(login_url='api/logins')
 def delete_role(request, role_id):
     """
     Function:
@@ -145,7 +141,6 @@ def delete_role(request, role_id):
 
 
 @csrf_exempt
-@login_required(login_url='api/logins')
 def add_permission(request):
     """
     Function:
@@ -178,7 +173,6 @@ def add_permission(request):
     return JsonResponse({"message": INVALID_METHOD}, status=405)
 
 
-@login_required(login_url='api/logins')
 def get_permissions(request):
     """
     Function:
@@ -207,7 +201,6 @@ def get_permissions(request):
 
 
 @csrf_exempt
-@login_required(login_url='api/logins')
 def update_permission(request, permission_id):
     """
     Function:
@@ -254,7 +247,6 @@ def update_permission(request, permission_id):
 
 
 @csrf_exempt
-@login_required(login_url='api/logins')
 def assign_permission(request):
     """
     Function:
@@ -294,7 +286,6 @@ def assign_permission(request):
 
 
 @csrf_protect
-@login_required(login_url='api/logins')
 def add_account(request):
     """
     Function:
@@ -370,7 +361,6 @@ def add_account(request):
     return JsonResponse({"message": REQUIRED}, status=400)
 
 
-@login_required(login_url='api/logins')
 def get_account_detail(request, account_id):
     """
     Function:
@@ -454,7 +444,6 @@ def login_account(request):
 
 
 @csrf_exempt
-@login_required(login_url='api/logins')
 def update_account(request, account_id):
     """
     Function:
