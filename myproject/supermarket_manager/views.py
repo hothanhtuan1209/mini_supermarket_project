@@ -444,43 +444,60 @@ def login_account(request):
 
 
 @csrf_exempt
+@login_required(login_url='api/logins')
 def update_account(request, account_id):
     """
     Function:
-        - Update account information.
-
-        - This view allows updating account information such as user name, birth date, address,
-          email, phone number, gender, and status.
+        - update account information and change password
+        - This view allows managing account information such as updating user name, birth date, address,
+          email, phone number, gender, and changing the password.
         - The view expects a PUT request with a JSON
-          body containing the fields to be updated.
+          body containing the fields to be updated for account information, or a PATCH request with
+          old_password and new_password fields to change the password.
 
     Parameters:
         - request: The HTTP request object.
         - account_id: The unique identifier of the account to be updated.
 
     Returns:
-        - JsonResponse: A JSON response indicating the result of the update operation.
+        - JsonResponse: A JSON response indicating the result of the operation.
     """
 
-    if request.method != "PUT":
+    if request.method != "PATCH" and request.method != "PUT":
         return JsonResponse({"message": INVALID_METHOD}, status=405)
-    
+
     try:
         account = Account.objects.get(account_id=account_id)
         data = json.loads(request.body)
 
-        if "status" in data:
-            if account.status == AccountStatus.ACTIVE.value:
-                account.status = AccountStatus.DISABLED.value
-            else:
-                account.status = AccountStatus.ACTIVE.value
+        if request.method == "PUT":
+            if "status" in data:
+                if account.status == AccountStatus.ACTIVE.value:
+                    account.status = AccountStatus.DISABLED.value
+                else:
+                    account.status = AccountStatus.ACTIVE.value
 
-        account.user_name = data.get('user_name', account.user_name)
-        account.birth_day = data.get('birth_day', account.birth_day)
-        account.address = data.get('address', account.address)
-        account.email = data.get('email', account.email)
-        account.phone_number = data.get('phone_number', account.phone_number)
-        account.gender = data.get('gender', account.gender)
+            account.user_name = data.get('user_name', account.user_name)
+            account.birth_day = data.get('birth_day', account.birth_day)
+            account.address = data.get('address', account.address)
+            account.email = data.get('email', account.email)
+            account.phone_number = data.get('phone_number', account.phone_number)
+            account.gender = data.get('gender', account.gender)
+
+        elif request.method == "PATCH":
+            old_password = data.get('old_password')
+            new_password = data.get('new_password')
+
+            if account.check_password(old_password):
+                account.set_password(new_password)
+                
+                account.save()
+                update_session_auth_hash(request, account)
+
+                return JsonResponse({"message": CHANGED_PASSWORD})
+            
+            else:
+                return JsonResponse({"message": INCORRECT_OLD_PASSWORD}, status=400)
 
         account.save()
 
@@ -489,49 +506,5 @@ def update_account(request, account_id):
     except Account.DoesNotExist:
         return JsonResponse({"message": NOT_FOUND}, status=404)
     
-    except Exception as e:
-        return JsonResponse({"message": str(e)}, status=400)
-
-
-@csrf_exempt
-@login_required(login_url='api/logins')
-def change_password(request, account_id):
-    """
-    Function:
-        - Change account password.
-
-        - This view allows changing the password of the account associated with the provided
-        account_id. It expects a POST request with a JSON body containing the old_password
-        and new_password fields.
-
-    Parameters:
-        - request: The HTTP request object.
-        - account_id: The unique identifier of the account whose password will be changed.
-
-    Returns:
-        - JsonResponse: A JSON response indicating the result of the password change operation.
-    """
-
-    if request.method != "PATCH":
-        return JsonResponse({"message": INVALID_METHOD}, status=405)
-
-    try:
-        account = Account.objects.get(account_id=account_id)
-        data = json.loads(request.body)
-
-        old_password = data.get('old_password')
-        new_password = data.get('new_password')
-
-        if account.check_password(old_password):
-            account.set_password(new_password)
-            
-            account.save()
-            update_session_auth_hash(request, account)
-
-            return JsonResponse({"message": CHANGED_PASSWORD})
-        
-        else:
-            return JsonResponse({"message": INCORRECT_OLD_PASSWORD}, status=400)
-
     except Exception as e:
         return JsonResponse({"message": str(e)}, status=400)
