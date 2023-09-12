@@ -1,7 +1,7 @@
 from django.http import JsonResponse
 from django.db.utils import IntegrityError
 from django.views.decorators.csrf import csrf_exempt, csrf_protect
-from .models import (Role, Permission, Role_Permission, Account)
+from .models import (Role, Permission, Role_Permission, Account, AccountStatus)
 import re
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth import authenticate, login
@@ -470,10 +470,10 @@ def update_account(request, account_id):
         data = json.loads(request.body)
 
         if "status" in data:
-            if account.status == "A":
-                account.status = "D"
+            if account.status == AccountStatus.ACTIVE.value:
+                account.status = AccountStatus.DISABLED.value
             else:
-                account.status = "A"
+                account.status = AccountStatus.ACTIVE.value
 
         account.user_name = data.get('user_name', account.user_name)
         account.birth_day = data.get('birth_day', account.birth_day)
