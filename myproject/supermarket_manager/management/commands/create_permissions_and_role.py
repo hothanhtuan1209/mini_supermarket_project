@@ -35,4 +35,4 @@ class Command(BaseCommand):
             else:
                 self.stdout.write(self.style.WARNING(f'Permission {permission_name} already exists'))
 
-            self.stdout.write(self.style.SUCCESS(f'ID: {permission.id}, Name: {permission.permission_name}'))
+            self.stdout.write(self.style.SUCCESS(f'ID: {permission.permission_id}, Name: {permission.permission_name}'))
