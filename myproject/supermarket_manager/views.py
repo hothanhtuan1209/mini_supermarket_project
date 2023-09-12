@@ -1,10 +1,12 @@
 from django.http import JsonResponse
 from django.db.utils import IntegrityError
 from django.views.decorators.csrf import csrf_exempt, csrf_protect
-from .models import (Role, Permission, Role_Permission, Account)
+from .models import (Role, Permission, Role_Permission, Account, AccountStatus)
 import re
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth import authenticate, login
+from django.contrib.auth import update_session_auth_hash
+from django.contrib.auth.decorators import login_required
 from .constants import (
     ADDED,
     EXISTS,
@@ -19,6 +21,8 @@ from .constants import (
     LOGIN,
     INCORRECT,
     REQUIRED_LOGIN,
+    CHANGED_PASSWORD,
+    INCORRECT_OLD_PASSWORD
 )
 import json
 
@@ -437,3 +441,70 @@ def login_account(request):
         return JsonResponse({"message": LOGIN}, status=200)
     
     return JsonResponse({"message": INCORRECT}, status=401)
+
+
+@csrf_exempt
+@login_required(login_url='api/logins')
+def update_account(request, account_id):
+    """
+    Function:
+        - update account information and change password
+        - This view allows managing account information such as updating user name, birth date, address,
+          email, phone number, gender, and changing the password.
+        - The view expects a PUT request with a JSON
+          body containing the fields to be updated for account information, or a PATCH request with
+          old_password and new_password fields to change the password.
+
+    Parameters:
+        - request: The HTTP request object.
+        - account_id: The unique identifier of the account to be updated.
+
+    Returns:
+        - JsonResponse: A JSON response indicating the result of the operation.
+    """
+
+    if request.method != "PATCH" and request.method != "PUT":
+        return JsonResponse({"message": INVALID_METHOD}, status=405)
+
+    try:
+        account = Account.objects.get(account_id=account_id)
+        data = json.loads(request.body)
+
+        if request.method == "PUT":
+            if "status" in data:
+                if account.status == AccountStatus.ACTIVE.value:
+                    account.status = AccountStatus.DISABLED.value
+                else:
+                    account.status = AccountStatus.ACTIVE.value
+
+            account.user_name = data.get('user_name', account.user_name)
+            account.birth_day = data.get('birth_day', account.birth_day)
+            account.address = data.get('address', account.address)
+            account.email = data.get('email', account.email)
+            account.phone_number = data.get('phone_number', account.phone_number)
+            account.gender = data.get('gender', account.gender)
+
+        elif request.method == "PATCH":
+            old_password = data.get('old_password')
+            new_password = data.get('new_password')
+
+            if account.check_password(old_password):
+                account.set_password(new_password)
+                
+                account.save()
+                update_session_auth_hash(request, account)
+
+                return JsonResponse({"message": CHANGED_PASSWORD})
+            
+            else:
+                return JsonResponse({"message": INCORRECT_OLD_PASSWORD}, status=400)
+
+        account.save()
+
+        return JsonResponse({"message": UPDATED})
+    
+    except Account.DoesNotExist:
+        return JsonResponse({"message": NOT_FOUND}, status=404)
+    
+    except Exception as e:
+        return JsonResponse({"message": str(e)}, status=400)
