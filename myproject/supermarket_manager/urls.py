@@ -28,5 +28,5 @@ urlpatterns = [
     path("api/accounts/<str:account_id>", get_account_detail, name="get-account-detail"),
     path("api/logins", login_account, name="login-account"),
     path("api/accounts/updates/<str:account_id>", update_account, name="update-account"),
-    path("api/accounts/<str:account_id>/changes-password", change_password, name="change password")
+    path("api/accounts/<str:account_id>/change-password", change_password, name="change password")
 ]
