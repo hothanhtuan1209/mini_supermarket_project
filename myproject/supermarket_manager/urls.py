@@ -12,7 +12,6 @@ from .views import (
     get_account_detail,
     login_account,
     update_account,
-    change_password
 )
 
 urlpatterns = [
@@ -28,5 +27,4 @@ urlpatterns = [
     path("api/accounts/<str:account_id>", get_account_detail, name="get-account-detail"),
     path("api/logins", login_account, name="login-account"),
     path("api/accounts/<str:account_id>", update_account, name="update-account"),
-    path("api/accounts/<str:account_id>", change_password, name="change password")
 ]
