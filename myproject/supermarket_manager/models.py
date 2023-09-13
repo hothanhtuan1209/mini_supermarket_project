@@ -80,22 +80,10 @@ class AccountManager(BaseUserManager):
         return user
 
     def create_superuser(self, email, user_name, password=None, **extra_fields):
-            extra_fields.setdefault('is_staff', True)
-            extra_fields.setdefault('is_superuser', True)
+        extra_fields.setdefault('is_staff', True)
+        extra_fields.setdefault('is_superuser', True)
 
-            role_id = extra_fields.pop('role_id', None)
-
-            if role_id is None:
-                raise ValueError("A role_id must be provided for the superuser.")
-
-            try:
-                role_instance = Role.objects.get(role_id=role_id)
-            except Role.DoesNotExist:
-                raise ValueError(f"Role with role_id={role_id} does not exist.")
-
-            user = self.create_user(email, user_name, password, role_id=role_instance, **extra_fields)
-            
-            return user
+        return self.create_user(email, user_name, password, **extra_fields)
 
 
 class Account(AbstractBaseUser, PermissionsMixin):
@@ -140,6 +128,7 @@ class Account(AbstractBaseUser, PermissionsMixin):
     USERNAME_FIELD = 'email'
 
     objects = AccountManager()
+
 
     def __str__(self):
         """
