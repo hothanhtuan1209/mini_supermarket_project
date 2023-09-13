@@ -58,3 +58,6 @@ CHANGED_PASSWORD = "Password changed successfully"
 
 # Message old password incorrect
 INCORRECT_OLD_PASSWORD = "Old password is incorrect"
+
+# Message for logout feature
+LOGOUT = "Logged out successfully"
