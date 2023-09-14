@@ -1,10 +1,10 @@
 from django.http import JsonResponse
 from django.db.utils import IntegrityError
 from django.views.decorators.csrf import csrf_exempt, csrf_protect
-from .models import (Role, Permission, Role_Permission, Account, AccountStatus)
+from .models import Role, Permission, Role_Permission, Account, AccountStatus
 import re
 from django.contrib.auth.hashers import make_password
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.decorators import login_required
 from .constants import (
@@ -22,7 +22,8 @@ from .constants import (
     INCORRECT,
     REQUIRED_LOGIN,
     CHANGED_PASSWORD,
-    INCORRECT_OLD_PASSWORD
+    INCORRECT_OLD_PASSWORD,
+    LOGOUT,
 )
 import json
 
@@ -259,19 +260,21 @@ def assign_permission(request):
         - JsonResponse: A JSON response indicating the result of the assignment.
     """
 
-    if request.method == 'POST':
+    if request.method == "POST":
         data = json.loads(request.body)
-        role_id = data.get('role_id', None)
-        permission_id = data.get('permission_id', None)
-       
+        role_id = data.get("role_id", None)
+        permission_id = data.get("permission_id", None)
+
         if role_id is not None and permission_id is not None:
             try:
                 role = Role.objects.get(pk=role_id)
                 permission = Permission.objects.get(pk=permission_id)
-               
-                role_permission = Role_Permission(role_id=role, permission_id=permission)
+
+                role_permission = Role_Permission(
+                    role_id=role, permission_id=permission
+                )
                 role_permission.save()
-               
+
                 return JsonResponse({"message": ASSIGN}, status=201)
             except Role.DoesNotExist:
                 return JsonResponse({"message": NOT_FOUND}, status=404)
@@ -279,9 +282,9 @@ def assign_permission(request):
                 return JsonResponse({"message": NOT_FOUND}, status=404)
             except Exception as e:
                 return JsonResponse({"message": str(e)}, status=400)
-       
+
         return JsonResponse({"message": REQUIRED}, status=400)
-   
+
     return JsonResponse({"message": INVALID_METHOD}, status=405)
 
 
@@ -292,7 +295,7 @@ def add_account(request):
         - API endpoint to add a new account to the database
 
         - This function handles POST requests to add a new account to the database.
-    
+
     Attributes:
         - account_id (CharField): The unique identifier for the account.
         - user_name (CharField): The name of the user.
@@ -304,11 +307,10 @@ def add_account(request):
         - phone_number (CharField): The user's phone number.
         - gender (CharField): The gender of the user.
         - status (CharField): The status of the account.
-    
+
     Returns:
         - JsonResponse: A JSON response indicating a result of the add operation
     """
-
 
     if request.method != "POST":
         return JsonResponse({"message": INVALID_METHOD}, status=405)
@@ -323,11 +325,11 @@ def add_account(request):
     email = data.get("email", None)
     phone_number = data.get("phone_number", None)
 
-    if not re.match(r'^0\d{9}$', phone_number):
-        return JsonResponse({"message": PHONE_FORMAT}, status=400)  
+    if not re.match(r"^0\d{9}$", phone_number):
+        return JsonResponse({"message": PHONE_FORMAT}, status=400)
 
     if raw_password is not None and len(raw_password) < 8:
-        return JsonResponse({"message": PASS_NOT_ENOUGH}, status=400)     
+        return JsonResponse({"message": PASS_NOT_ENOUGH}, status=400)
 
     if (
         user_name
@@ -341,16 +343,16 @@ def add_account(request):
 
         try:
             hashed_password = make_password(raw_password)
-            role            = Role.objects.get(role_id=role_id)
+            role = Role.objects.get(role_id=role_id)
             account = Account()
-            account.account_id   = account.random_account_id()
-            account.user_name    = user_name
-            account.user_name    = user_name
-            account.password     = hashed_password
-            account.role_id      = role
-            account.birth_day    = birth_day
-            account.address      = address
-            account.email        = email
+            account.account_id = account.random_account_id()
+            account.user_name = user_name
+            account.user_name = user_name
+            account.password = hashed_password
+            account.role_id = role
+            account.birth_day = birth_day
+            account.address = address
+            account.email = email
             account.phone_number = phone_number
             account.save()
             return JsonResponse({"message": ADDED}, status=201)
@@ -387,22 +389,22 @@ def get_account_detail(request, account_id):
         or a JSON response with a 'message' field indicating 'NOT_FOUND' and a status code of 404
         if the account is not found in the database.
     """
-        
+
     try:
         account = Account.objects.get(account_id=account_id)
         account_data = {
-            'user_name': account.user_name,
-            'role': account.role_id.role_name,
-            'birth_day': account.birth_day.strftime('%Y-%m-%d'),
-            'address': account.address,
-            'email': account.email,
-            'phone_number': account.phone_number,
-            'gender': account.get_gender_display(),
-            'status': account.get_status_display(),
+            "user_name": account.user_name,
+            "role": account.role_id.role_name,
+            "birth_day": account.birth_day.strftime("%Y-%m-%d"),
+            "address": account.address,
+            "email": account.email,
+            "phone_number": account.phone_number,
+            "gender": account.get_gender_display(),
+            "status": account.get_status_display(),
         }
         return JsonResponse(account_data, status=200)
     except Account.DoesNotExist:
-        
+
         return JsonResponse({"message": NOT_FOUND}, status=404)
 
 
@@ -425,8 +427,8 @@ def login_account(request):
     """
 
     if request.method != "POST":
-        return JsonResponse({"message": INVALID_METHOD }, status=405)
-    
+        return JsonResponse({"message": INVALID_METHOD}, status=405)
+
     data = json.loads(request.body)
     email = data.get("email", None)
     password = data.get("password", None)
@@ -439,72 +441,111 @@ def login_account(request):
     if user is not None:
         login(request, user)
         return JsonResponse({"message": LOGIN}, status=200)
-    
+
     return JsonResponse({"message": INCORRECT}, status=401)
 
 
 @csrf_exempt
-@login_required(login_url='api/logins')
 def update_account(request, account_id):
     """
     Function:
-        - update account information and change password
-        - This view allows managing account information such as updating user name, birth date, address,
-          email, phone number, gender, and changing the password.
+        - Update account information.
+
+        - This view allows updating account information such as user name, birth date, address,
+          email, phone number, gender, and status.
         - The view expects a PUT request with a JSON
-          body containing the fields to be updated for account information, or a PATCH request with
-          old_password and new_password fields to change the password.
+          body containing the fields to be updated.
 
     Parameters:
         - request: The HTTP request object.
         - account_id: The unique identifier of the account to be updated.
 
     Returns:
-        - JsonResponse: A JSON response indicating the result of the operation.
+        - JsonResponse: A JSON response indicating the result of the update operation.
     """
 
-    if request.method != "PATCH" and request.method != "PUT":
+    if request.method != "PUT":
         return JsonResponse({"message": INVALID_METHOD}, status=405)
 
     try:
         account = Account.objects.get(account_id=account_id)
         data = json.loads(request.body)
 
-        if request.method == "PUT":
-            if "status" in data:
-                if account.status == AccountStatus.ACTIVE.value:
-                    account.status = AccountStatus.DISABLED.value
-                else:
-                    account.status = AccountStatus.ACTIVE.value
-
-            account.user_name = data.get('user_name', account.user_name)
-            account.birth_day = data.get('birth_day', account.birth_day)
-            account.address = data.get('address', account.address)
-            account.email = data.get('email', account.email)
-            account.phone_number = data.get('phone_number', account.phone_number)
-            account.gender = data.get('gender', account.gender)
-
-        elif request.method == "PATCH":
-            old_password = data.get('old_password')
-            new_password = data.get('new_password')
-
-            if account.check_password(old_password):
-                account.set_password(new_password)
-                
-                account.save()
-                update_session_auth_hash(request, account)
-
-                return JsonResponse({"message": CHANGED_PASSWORD})
-            
+        if "status" in data:
+            if account.status == AccountStatus.ACTIVE.value:
+                account.status = AccountStatus.DISABLED.value
             else:
-                return JsonResponse({"message": INCORRECT_OLD_PASSWORD}, status=400)
+                account.status = AccountStatus.ACTIVE.value
+
+        account.user_name = data.get("user_name", account.user_name)
+        account.birth_day = data.get("birth_day", account.birth_day)
+        account.address = data.get("address", account.address)
+        account.email = data.get("email", account.email)
+        account.phone_number = data.get("phone_number", account.phone_number)
+        account.gender = data.get("gender", account.gender)
 
         account.save()
 
         return JsonResponse({"message": UPDATED})
-    
+
     except Account.DoesNotExist:
         return JsonResponse({"message": NOT_FOUND}, status=404)
-    
+
     except Exception as e:
         return JsonResponse({"message": str(e)}, status=400)
+
+
+@csrf_exempt
+@login_required(login_url="api/logins")
+def change_password(request, account_id):
+    """
+    Function:
+        - Change account password.
+
+        - This view allows changing the password of the account associated with the provided
+          account_id. It expects a POST request with a JSON body containing the old_password
+          and new_password fields.
+
+    Parameters:
+        - request: The HTTP request object.
+        - account_id: The unique identifier of the account whose password will be changed.
+
+    Returns:
+        - JsonResponse: A JSON response indicating the result of the password change operation.
+    """
+
+    if request.method != "PATCH":
+        return JsonResponse({"message": INVALID_METHOD}, status=405)
+
+    try:
+        account = Account.objects.get(account_id=account_id)
+        data = json.loads(request.body)
+
+        old_password = data.get("old_password")
+        new_password = data.get("new_password")
+
+        if account.check_password(old_password):
+            account.set_password(new_password)
+
+            account.save()
+            update_session_auth_hash(request, account)
+
+            return JsonResponse({"message": CHANGED_PASSWORD})
+
+        else:
+            return JsonResponse({"message": INCORRECT_OLD_PASSWORD}, status=400)
+
+    except Exception as e:
+        return JsonResponse({"message": str(e)}, status=400)
+
+
+@csrf_exempt
+@login_required(login_url="api/logins")
+def logout(request):
+    """
+    View function for logging out a user.
+    """
+
+    logout(request)
+
+    return JsonResponse({"message": LOGOUT})
