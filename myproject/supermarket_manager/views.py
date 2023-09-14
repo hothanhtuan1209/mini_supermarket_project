@@ -469,16 +469,13 @@ def update_account(request, account_id):
           body containing the fields to be updated for account information, or a PATCH request with
           old_password and new_password fields to change the password.
 
-
     Parameters:
         - request: The HTTP request object.
         - account_id: The unique identifier of the account to be updated.
 
-
     Returns:
         - JsonResponse: A JSON response indicating the result of the operation.
     """
-
 
     if request.method != "PATCH" and request.method != "PUT":
         return JsonResponse({"message": INVALID_METHOD}, status=405)
@@ -486,7 +483,6 @@ def update_account(request, account_id):
     try:
         account = Account.objects.get(account_id=account_id)
         data = json.loads(request.body)
-
 
         if request.method == "PUT":
             if "status" in data:
