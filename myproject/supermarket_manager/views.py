@@ -541,7 +541,7 @@ def change_password(request, account_id):
 
 @csrf_exempt
 @login_required(login_url="api/logins")
-def logout_account(request):
+def logout(request):
     """
     View function for logging out a user.
     """
