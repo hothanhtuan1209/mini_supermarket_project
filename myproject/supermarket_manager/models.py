@@ -129,12 +129,7 @@ class AccountManager(BaseUserManager):
         if role_id is None:
             raise ValueError("A role_id must be provided for the superuser.")
 
-        try:
-            role_instance = Role.objects.get(role_id=role_id)
-        except Role.DoesNotExist:
-            raise ValueError(f"Role with role_id={role_id} does not exist.")
-
-        user = self.create_user(email, user_name, password, role_id=role_instance, **extra_fields)
+        user = self.create_user(email, user_name, password, role_id=role_id, **extra_fields)
         
         return user
 
