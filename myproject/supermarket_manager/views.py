@@ -1,7 +1,7 @@
 from django.http import JsonResponse
 from django.db.utils import IntegrityError
 from django.views.decorators.csrf import csrf_exempt, csrf_protect
-from .models import Role, Permission, Role_Permission, Account, AccountStatus
+from .models import Role, Permission, Role_Permission, Account
 import re
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth import authenticate, login, logout
@@ -485,18 +485,13 @@ def update_account(request, account_id):
         data = json.loads(request.body)
 
         if request.method == "PUT":
-            if "status" in data:
-                if account.status == AccountStatus.ACTIVE.value:
-                    account.status = AccountStatus.DISABLED.value
-                else:
-                    account.status = AccountStatus.ACTIVE.value
-
             account.user_name = data.get("user_name", account.user_name)
             account.birth_day = data.get("birth_day", account.birth_day)
             account.address = data.get("address", account.address)
             account.email = data.get("email", account.email)
             account.phone_number = data.get("phone_number", account.phone_number)
             account.gender = data.get("gender", account.gender)
+            account.status = data.get("status", account.status)
 
         elif request.method == "PATCH":
             old_password = data.get("old_password")
