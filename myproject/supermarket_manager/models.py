@@ -69,41 +69,41 @@ class AccountManager(BaseUserManager):
     """
     
     def create_user(self, email, user_name, password=None, role_id=None, **extra_fields):
-            if not email:
-                raise ValueError('The Email field must be set')
-            
-            email = self.normalize_email(email)
-            if role_id is None:
-                raise ValueError("A role_id must be provided for the user.")
-            
-            try:
-                role_instance = Role.objects.get(role_id=role_id)
-            except Role.DoesNotExist:
-                raise ValueError(f"Role with role_id={role_id} does not exist.")
+        if not email:
+            raise ValueError('The Email field must be set')
+        
+        email = self.normalize_email(email)
+        if role_id is None:
+            raise ValueError("A role_id must be provided for the user.")
+        
+        try:
+            role_instance = Role.objects.get(role_id=role_id)
+        except Role.DoesNotExist:
+            raise ValueError(f"Role with role_id={role_id} does not exist.")
 
-            user  = self.model(email=email, user_name=user_name, role_id=role_instance, **extra_fields)
-            user.set_password(password)
-            user.save(using=self._db)
-            
-            return user
+        user  = self.model(email=email, user_name=user_name, role_id=role_instance, **extra_fields)
+        user.set_password(password)
+        user.save(using=self._db)
+        
+        return user
 
     def create_superuser(self, email, user_name, password=None, **extra_fields):
-            extra_fields.setdefault('is_staff', True)
-            extra_fields.setdefault('is_superuser', True)
+        extra_fields.setdefault('is_staff', True)
+        extra_fields.setdefault('is_superuser', True)
 
-            role_id = extra_fields.pop('role_id', None)
+        role_id = extra_fields.pop('role_id', None)
 
-            if role_id is None:
-                raise ValueError("A role_id must be provided for the superuser.")
+        if role_id is None:
+            raise ValueError("A role_id must be provided for the superuser.")
 
-            try:
-                role_instance = Role.objects.get(role_id=role_id)
-            except Role.DoesNotExist:
-                raise ValueError(f"Role with role_id={role_id} does not exist.")
+        try:
+            role_instance = Role.objects.get(role_id=role_id)
+        except Role.DoesNotExist:
+            raise ValueError(f"Role with role_id={role_id} does not exist.")
 
-            user = self.create_user(email, user_name, password, role_id=role_instance, **extra_fields)
-            
-            return user
+        user = self.create_user(email, user_name, password, role_id=role_instance, **extra_fields)
+        
+        return user
 
 
 class Account(AbstractBaseUser, PermissionsMixin):
