@@ -69,6 +69,23 @@ class AccountManager(BaseUserManager):
     """
     
     def create_user(self, email, user_name, password=None, role_id=None, **extra_fields):
+        """
+        Create a new user and save it to the database.
+
+        Args:
+            email (str): The email address for the new user.
+            user_name (str): The username for the new user.
+            password (str, optional): The password for the new user.
+            role_id (int, optional): The ID of the role associated with the user.
+            **extra_fields: Additional fields to be saved in the user object.
+
+        Returns:
+            User: The newly created user object.
+
+        Raises:
+            ValueError: If the email field is empty or if the specified role_id does not exist.
+        """
+        
         if not email:
             raise ValueError('The Email field must be set')
         
@@ -88,6 +105,22 @@ class AccountManager(BaseUserManager):
         return user
 
     def create_superuser(self, email, user_name, password=None, **extra_fields):
+        """
+        Create a new superuser and save it to the database.
+
+        Args:
+            email (str): The email address for the new superuser.
+            user_name (str): The username for the new superuser.
+            password (str, optional): The password for the new superuser.
+            **extra_fields: Additional fields to be saved in the superuser object.
+
+        Returns:
+            User: The newly created superuser object.
+
+        Raises:
+            ValueError: If the email field is empty or if a role_id is not provided for the superuser.
+        """
+
         extra_fields.setdefault('is_staff', True)
         extra_fields.setdefault('is_superuser', True)
 
