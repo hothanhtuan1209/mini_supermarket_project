@@ -68,22 +68,70 @@ class AccountManager(BaseUserManager):
         BaseUserManager: The base manager class provided by Django.
     """
     
-    def create_user(self, email, user_name, password=None, **extra_fields):
+    def create_user(self, email, user_name, password=None, role_id=None, **extra_fields):
+        """
+        Create a new user and save it to the database.
+
+        Args:
+            email (str): The email address for the new user.
+            user_name (str): The username for the new user.
+            password (str, optional): The password for the new user.
+            role_id (int, optional): The ID of the role associated with the user.
+            **extra_fields: Additional fields to be saved in the user object.
+
+        Returns:
+            User: The newly created user object.
+
+        Raises:
+            ValueError: If the email field is empty or if the specified role_id does not exist.
+        """
+        
         if not email:
             raise ValueError('The Email field must be set')
         
         email = self.normalize_email(email)
-        user  = self.model(email=email, user_name=user_name, **extra_fields)
+        if role_id is None:
+            raise ValueError("A role_id must be provided for the user.")
+        
+        try:
+            role_instance = Role.objects.get(role_id=role_id)
+        except Role.DoesNotExist:
+            raise ValueError(f"Role with role_id={role_id} does not exist.")
+
+        user  = self.model(email=email, user_name=user_name, role_id=role_instance, **extra_fields)
         user.set_password(password)
         user.save(using=self._db)
         
         return user
 
     def create_superuser(self, email, user_name, password=None, **extra_fields):
+        """
+        Create a new superuser and save it to the database.
+
+        Args:
+            email (str): The email address for the new superuser.
+            user_name (str): The username for the new superuser.
+            password (str, optional): The password for the new superuser.
+            **extra_fields: Additional fields to be saved in the superuser object.
+
+        Returns:
+            User: The newly created superuser object.
+
+        Raises:
+            ValueError: If the email field is empty or if a role_id is not provided for the superuser.
+        """
+
         extra_fields.setdefault('is_staff', True)
         extra_fields.setdefault('is_superuser', True)
 
-        return self.create_user(email, user_name, password, **extra_fields)
+        role_id = extra_fields.pop('role_id', None)
+
+        if role_id is None:
+            raise ValueError("A role_id must be provided for the superuser.")
+
+        user = self.create_user(email, user_name, password, role_id=role_id, **extra_fields)
+        
+        return user
 
 
 class Account(AbstractBaseUser, PermissionsMixin):
