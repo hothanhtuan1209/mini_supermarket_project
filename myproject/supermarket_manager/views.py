@@ -52,6 +52,7 @@ def add_role(request):
                 return JsonResponse({"message": ADDED}, status=201)
             except IntegrityError:
                 return JsonResponse({"message": EXISTS}, status=400)
+        
         return JsonResponse({"message": REQUIRED}, status=400)
 
     return JsonResponse({"message": INVALID_METHOD}, status=405)
@@ -73,6 +74,7 @@ def get_roles(request):
         role_data = [
             {"role_id": role.role_id, "role_name": role.role_name} for role in roles
         ]
+        
         return JsonResponse({"roles": role_data}, status=200)
 
     return JsonResponse({"message": INVALID_METHOD}, status=405)
