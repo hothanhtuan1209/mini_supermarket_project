@@ -11,7 +11,7 @@ from .views import (
     add_account,
     get_account_detail,
     login_account,
-    change_password,
+    update_account,
     logout
 )
 
@@ -27,6 +27,6 @@ urlpatterns = [
     path("api/accounts", add_account, name="add-account"),
     path("api/accounts/<str:account_id>", get_account_detail, name="get-account-detail"),
     path("api/logins", login_account, name="login"),
-    path("api/accounts/<str:account_id>", change_password, name="update-account"),
+    path("api/accounts/updates/<str:account_id>", update_account, name="update-account"),
     path("api/logouts", logout, name="logout")
 ]
