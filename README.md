@@ -45,6 +45,11 @@ This is a project to build mini supermarket management software, including Accou
 
 8. Login superuser account
  - Login with account superuser
- 
- ## Contribute
+
+## How to fix csrf token error in Postman (403 forbidden)
+ - In Headers of request, enter key = 'X-CSRFToken' and value '{{csrftoken}}'
+ - Create a environment with name is 'Token' and Variable is 'csrftoken'
+ - In Tests of request, enter 'var xsrfCookie = postman.getResponseCookie("csrftoken"); postman.setEnvironmentVariable('csrftoken', xsrfCookie.value);'
+
+## Contribute
  - If you want to contribute to this project, please create a pull request and clearly describe the changes you propose
