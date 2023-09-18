@@ -49,13 +49,9 @@ class Role(models.Model):
 
     def __str__(self):
         """
-        Return a string representation of the Role object.
+        Return a string representation of the Permission object.
         """
-
-        if isinstance(self.role_name, str):
-            return self.role_name
-        else:
-            return str(self.role_name)
+        return str(self.permission_name)
 
 
 class AccountManager(BaseUserManager):
@@ -185,6 +181,16 @@ class Account(AbstractBaseUser, PermissionsMixin):
         return str(self.user_name)
     
     def random_account_id(self):
+        """
+        Generate a unique 5-digit account identifier.
+
+        This function generates a random 5-digit account identifier and checks if it already exists in the database.
+        It repeats this process until a unique identifier is found.
+
+        Returns:
+            str: A unique 5-digit account identifier.
+        """
+
         while True:
             account_id = ''.join(random.choices(string.digits, k=5))
             if not Account.objects.filter(account_id=account_id).exists():
