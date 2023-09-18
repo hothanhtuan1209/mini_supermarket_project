@@ -17,9 +17,9 @@ from .constants import (
     ASSIGN,
     NOT_FOUND_ROLE,
     PHONE_FORMAT,
-    PASS_NOT_ENOUGH,
+    PASSWORD_NOT_ENOUGH,
     LOGIN,
-    INCORRECT,
+    INCORRECT_EMAIL_OR_PASSWORD,
     REQUIRED_LOGIN,
     CHANGED_PASSWORD,
     INCORRECT_OLD_PASSWORD,
@@ -340,7 +340,7 @@ def add_account(request):
         return JsonResponse({"message": PHONE_FORMAT}, status=400)
 
     if raw_password is not None and len(raw_password) < 8:
-        return JsonResponse({"message": PASS_NOT_ENOUGH}, status=400)
+        return JsonResponse({"message": PASSWORD_NOT_ENOUGH}, status=400)
 
     if (
         user_name
@@ -454,7 +454,7 @@ def login_account(request):
         login(request, user)
         return JsonResponse({"message": LOGIN}, status=200)
 
-    return JsonResponse({"message": INCORRECT}, status=401)
+    return JsonResponse({"message": INCORRECT_EMAIL_OR_PASSWORD}, status=401)
 
 
 @csrf_exempt
