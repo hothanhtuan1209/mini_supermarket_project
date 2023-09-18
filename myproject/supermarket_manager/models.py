@@ -1,11 +1,12 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from django.core.validators import MinLengthValidator, RegexValidator
-from .constants import (STATUS_CHOICES, GENDER_CHOICES)
+
 from enum import Enum
 import random
 import string
 
+from .constants import (GENDER_CHOICES)
 
 class AccountStatus(Enum):
     ACTIVE = "Active"
@@ -25,7 +26,9 @@ class Permission(models.Model):
     permission_id   = models.AutoField(primary_key=True)
     permission_name = models.CharField(max_length=100, unique=True)
     description     = models.CharField(max_length=100)
-    status          = models.CharField(max_length=1, choices=STATUS_CHOICES, default="A")
+    status = models.CharField(
+        max_length=10, choices=[(status.value, status.value) for status in AccountStatus], default=AccountStatus.ACTIVE.value
+    )
 
     def __str__(self):
         """
@@ -46,6 +49,9 @@ class Role(models.Model):
     role_id    = models.AutoField(primary_key=True)
     role_name  = models.CharField(max_length=50, unique=True)
     permission = models.ManyToManyField(Permission, through="Role_Permission")
+    status = models.CharField(
+        max_length=10, choices=[(status.value, status.value) for status in AccountStatus], default=AccountStatus.ACTIVE.value
+    )
 
     def __str__(self):
         """

@@ -105,44 +105,24 @@ def update_role(request, role_id):
     if request.method == "PUT":
         data = json.loads(request.body)
         role_name = data.get("role_name", None)
+        status = data.get("status", None)
 
         if role_name is not None:
             try:
                 role = Role.objects.get(role_id=role_id)
                 role.role_name = role_name
+                role.status = status
                 role.save()
+                
                 return JsonResponse({"message": UPDATED}, status=200)
+            
             except IntegrityError:
                 return JsonResponse({"message": EXISTS}, status=400)
+            
             except Role.DoesNotExist:
                 return JsonResponse({"message": NOT_FOUND}, status=404)
+        
         return JsonResponse({"message": REQUIRED}, status=400)
-
-    return JsonResponse({"message": INVALID_METHOD}, status=405)
-
-
-@csrf_exempt
-@login_required(login_url="api/logins")
-def delete_role(request, role_id):
-    """
-    Function:
-        - API endpoint to delete a role from the database.
-
-    Parameters:
-        request: The HTTP request object.
-        role_id (str): The ID of the role to be deleted.
-
-    Returns:
-        JsonResponse: A JSON response indicating the result of the delete operation.
-    """
-
-    if request.method == "DELETE":
-        try:
-            role = Role.objects.get(role_id=role_id)
-            role.delete()
-            return JsonResponse(status=204)
-        except Role.DoesNotExist:
-            return JsonResponse({"message": NOT_FOUND}, status=404)
 
     return JsonResponse({"message": INVALID_METHOD}, status=405)
 
@@ -204,6 +184,7 @@ def get_permissions(request):
             }
             for permission in permissions
         ]
+        
         return JsonResponse({"permissions": permission_data}, status=200)
 
     return JsonResponse({"message": INVALID_METHOD}, status=405)
@@ -231,25 +212,23 @@ def update_permission(request, permission_id):
         try:
             permission = Permission.objects.get(permission_id=permission_id)
             data = json.loads(request.body)
-
-            if "status" in data:
-                if permission.status == "A":
-                    permission.status = "D"
-                else:
-                    permission.status = "A"
-
             permission_name = data.get("permission_name", permission.permission_name)
             description = data.get("description", permission.description)
+            status = data.get("status", permission.status)
 
             permission.permission_name = permission_name
             permission.description = description
+            permission.status = status
             permission.save()
 
             return JsonResponse({"message": UPDATED}, status=200)
+        
         except Permission.DoesNotExist:
             return JsonResponse({"message": NOT_FOUND}, status=404)
+        
         except IntegrityError:
             return JsonResponse({"message": EXISTS}, status=400)
+        
         except Exception as e:
             return JsonResponse({"message": str(e)}, status=400)
 
