@@ -30,7 +30,7 @@ import json
 
 @csrf_exempt
 @login_required(login_url="api/logins")
-def add_role(request):
+def create_role(request):
     """
     Function:
         - View function to add a new role to the database.
@@ -149,7 +149,7 @@ def delete_role(request, role_id):
 
 @csrf_exempt
 @login_required(login_url="api/logins")
-def add_permission(request):
+def create_permission(request):
     """
     Function:
         - API endpoint to add a new permission to the database.
@@ -300,7 +300,7 @@ def assign_permission(request):
 
 @csrf_protect
 @login_required(login_url="api/logins")
-def add_account(request):
+def create_account(request):
     """
     Function:
         - API endpoint to add a new account to the database
