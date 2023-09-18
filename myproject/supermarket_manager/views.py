@@ -43,21 +43,24 @@ def add_role(request):
         - JsonResponse with an error message if the role name already exists or if the request data is invalid.
     """
 
-    if request.method == "POST":
-        data = json.loads(request.body)
-        role_name = data.get("role_name", None)
+    if request.method != "POST":
 
-        if role_name is not None:
-            try:
-                role = Role(role_name=role_name)
-                role.save()
-                return JsonResponse({"message": ADDED}, status=201)
-            except IntegrityError:
-                return JsonResponse({"message": EXISTS}, status=400)
+        return JsonResponse({"message": INVALID_METHOD}, status=405)
+    
+    data = json.loads(request.body)
+    role_name = data.get("role_name", None)
+
+    if role_name is not None:
+        try:
+            role = Role(role_name=role_name)
+            role.save()
+            
+            return JsonResponse({"message": ADDED}, status=201)
         
-        return JsonResponse({"message": REQUIRED}, status=400)
-
-    return JsonResponse({"message": INVALID_METHOD}, status=405)
+        except IntegrityError:
+            return JsonResponse({"message": EXISTS}, status=400)
+    
+    return JsonResponse({"message": REQUIRED}, status=400)
 
 
 @login_required(login_url="api/logins")
@@ -102,23 +105,27 @@ def update_role(request, role_id):
             - If the request method is not PUT, returns an error message with status 405.
     """
 
-    if request.method == "PUT":
-        data = json.loads(request.body)
-        role_name = data.get("role_name", None)
+    if request.method != "PUT":
+        return JsonResponse({"message": INVALID_METHOD}, status=405)
 
-        if role_name is not None:
-            try:
-                role = Role.objects.get(role_id=role_id)
-                role.role_name = role_name
-                role.save()
-                return JsonResponse({"message": UPDATED}, status=200)
-            except IntegrityError:
-                return JsonResponse({"message": EXISTS}, status=400)
-            except Role.DoesNotExist:
-                return JsonResponse({"message": NOT_FOUND}, status=404)
-        return JsonResponse({"message": REQUIRED}, status=400)
+    data = json.loads(request.body)
+    role_name = data.get("role_name", None)
 
-    return JsonResponse({"message": INVALID_METHOD}, status=405)
+    if role_name is not None:
+        try:
+            role = Role.objects.get(role_id=role_id)
+            role.role_name = role_name
+            role.save()
+        
+            return JsonResponse({"message": UPDATED}, status=200)
+        
+        except IntegrityError:
+            return JsonResponse({"message": EXISTS}, status=400)
+        
+        except Role.DoesNotExist:
+            return JsonResponse({"message": NOT_FOUND}, status=404)
+    
+    return JsonResponse({"message": REQUIRED}, status=400)
 
 
 @csrf_exempt
@@ -161,24 +168,26 @@ def add_permission(request):
         - JsonResponse: A JSON response indicating the result of the add operation.
     """
 
-    if request.method == "POST":
-        data = json.loads(request.body)
-        permission_name = data.get("permission_name", None)
-        description = data.get("description", None)
+    if request.method != "POST":
+        return JsonResponse({"message": INVALID_METHOD}, status=405)
+    
+    data = json.loads(request.body)
+    permission_name = data.get("permission_name", None)
+    description = data.get("description", None)
 
-        if permission_name is not None and description is not None:
-            try:
-                permission = Permission(
-                    permission_name=permission_name, description=description
-                )
-                permission.save()
-                return JsonResponse({"message": ADDED}, status=201)
-            except IntegrityError:
-                return JsonResponse({"message": EXISTS}, status=400)
-        else:
-            return JsonResponse({"message": REQUIRED}, status=400)
-
-    return JsonResponse({"message": INVALID_METHOD}, status=405)
+    if permission_name is not None and description is not None:
+        try:
+            permission = Permission(
+                permission_name=permission_name, description=description
+            )
+            permission.save()
+            return JsonResponse({"message": ADDED}, status=201)
+    
+        except IntegrityError:
+            return JsonResponse({"message": EXISTS}, status=400)
+    
+    else:
+        return JsonResponse({"message": REQUIRED}, status=400)
 
 
 @login_required(login_url="api/logins")
@@ -193,20 +202,21 @@ def get_permissions(request):
         - JsonResponse: A JSON response containing the list of permissions.
     """
 
-    if request.method == "GET":
-        permissions = Permission.objects.all()
-        permission_data = [
-            {
-                "permission_id": permission.permission_id,
-                "permission_name": permission.permission_name,
-                "description": permission.description,
-                "status": permission.status,
-            }
-            for permission in permissions
-        ]
-        return JsonResponse({"permissions": permission_data}, status=200)
-
-    return JsonResponse({"message": INVALID_METHOD}, status=405)
+    if request.method != "GET":
+        return JsonResponse({"message": INVALID_METHOD}, status=405)
+        
+    permissions = Permission.objects.all()
+    permission_data = [
+        {
+            "permission_id": permission.permission_id,
+            "permission_name": permission.permission_name,
+            "description": permission.description,
+            "status": permission.status,
+        }
+        for permission in permissions
+    ]
+    
+    return JsonResponse({"permissions": permission_data}, status=200)
 
 
 @csrf_exempt
@@ -227,33 +237,36 @@ def update_permission(request, permission_id):
         - JsonResponse: A JSON response indicating the result of the operation.
     """
 
-    if request.method == "PUT":
-        try:
-            permission = Permission.objects.get(permission_id=permission_id)
-            data = json.loads(request.body)
+    if request.method != "PUT":
+        return JsonResponse({"message": INVALID_METHOD}, status=405)
+    
+    try:
+        permission = Permission.objects.get(permission_id=permission_id)
+        data = json.loads(request.body)
 
-            if "status" in data:
-                if permission.status == "A":
-                    permission.status = "D"
-                else:
-                    permission.status = "A"
+        if "status" in data:
+            if permission.status == "A":
+                permission.status = "D"
+            else:
+                permission.status = "A"
 
-            permission_name = data.get("permission_name", permission.permission_name)
-            description = data.get("description", permission.description)
+        permission_name = data.get("permission_name", permission.permission_name)
+        description = data.get("description", permission.description)
 
-            permission.permission_name = permission_name
-            permission.description = description
-            permission.save()
+        permission.permission_name = permission_name
+        permission.description = description
+        permission.save()
 
-            return JsonResponse({"message": UPDATED}, status=200)
-        except Permission.DoesNotExist:
-            return JsonResponse({"message": NOT_FOUND}, status=404)
-        except IntegrityError:
-            return JsonResponse({"message": EXISTS}, status=400)
-        except Exception as e:
-            return JsonResponse({"message": str(e)}, status=400)
-
-    return JsonResponse({"message": INVALID_METHOD}, status=405)
+        return JsonResponse({"message": UPDATED}, status=200)
+    
+    except Permission.DoesNotExist:
+        return JsonResponse({"message": NOT_FOUND}, status=404)
+    
+    except IntegrityError:
+        return JsonResponse({"message": EXISTS}, status=400)
+    
+    except Exception as e:
+        return JsonResponse({"message": str(e)}, status=400)
 
 
 @csrf_exempt
@@ -270,32 +283,35 @@ def assign_permission(request):
         - JsonResponse: A JSON response indicating the result of the assignment.
     """
 
-    if request.method == "POST":
-        data = json.loads(request.body)
-        role_id = data.get("role_id", None)
-        permission_id = data.get("permission_id", None)
+    if request.method != "POST":
+        return JsonResponse({"message": INVALID_METHOD}, status=405)
 
-        if role_id is not None and permission_id is not None:
-            try:
-                role = Role.objects.get(pk=role_id)
-                permission = Permission.objects.get(pk=permission_id)
+    data = json.loads(request.body)
+    role_id = data.get("role_id", None)
+    permission_id = data.get("permission_id", None)
 
-                role_permission = Role_Permission(
-                    role_id=role, permission_id=permission
-                )
-                role_permission.save()
-
-                return JsonResponse({"message": ASSIGN}, status=201)
-            except Role.DoesNotExist:
-                return JsonResponse({"message": NOT_FOUND}, status=404)
-            except Permission.DoesNotExist:
-                return JsonResponse({"message": NOT_FOUND}, status=404)
-            except Exception as e:
-                return JsonResponse({"message": str(e)}, status=400)
-
+    if role_id is None or permission_id is None:
         return JsonResponse({"message": REQUIRED}, status=400)
+        
+    try:
+        role = Role.objects.get(pk=role_id)
+        permission = Permission.objects.get(pk=permission_id)
 
-    return JsonResponse({"message": INVALID_METHOD}, status=405)
+        role_permission = Role_Permission(
+            role_id=role, permission_id=permission
+        )
+        role_permission.save()
+
+        return JsonResponse({"message": ASSIGN}, status=201)
+    
+    except Role.DoesNotExist:
+        return JsonResponse({"message": NOT_FOUND}, status=404)
+    
+    except Permission.DoesNotExist:
+        return JsonResponse({"message": NOT_FOUND}, status=404)
+    
+    except Exception as e:
+        return JsonResponse({"message": str(e)}, status=400) 
 
 
 @csrf_protect
