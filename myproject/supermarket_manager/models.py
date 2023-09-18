@@ -172,7 +172,7 @@ class Account(AbstractBaseUser, PermissionsMixin):
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
 
-    REQUIRED_FIELDS = ['user_name', 'birth_day', 'address', 'phone_number', 'gender', 'status']
+    REQUIRED_FIELDS = ['user_name', 'birth_day', 'address', 'phone_number', 'gender', 'status', 'role_id']
     USERNAME_FIELD = 'email'
 
     objects = AccountManager()
