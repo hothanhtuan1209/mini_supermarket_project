@@ -129,32 +129,6 @@ def update_role(request, role_id):
 
 @csrf_exempt
 @login_required(login_url="api/logins")
-def delete_role(request, role_id):
-    """
-    Function:
-        - API endpoint to delete a role from the database.
-
-    Parameters:
-        request: The HTTP request object.
-        role_id (str): The ID of the role to be deleted.
-
-    Returns:
-        JsonResponse: A JSON response indicating the result of the delete operation.
-    """
-
-    if request.method == "DELETE":
-        try:
-            role = Role.objects.get(role_id=role_id)
-            role.delete()
-            return JsonResponse(status=204)
-        except Role.DoesNotExist:
-            return JsonResponse({"message": NOT_FOUND}, status=404)
-
-    return JsonResponse({"message": INVALID_METHOD}, status=405)
-
-
-@csrf_exempt
-@login_required(login_url="api/logins")
 def add_permission(request):
     """
     Function:
