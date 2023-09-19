@@ -500,7 +500,9 @@ def update_account(request, account_id):
         account = Account.objects.get(account_id=account_id)
         data = json.loads(request.body)
 
+        # Update account information but do not change password
         if request.method == "PUT":
+ 
             account.user_name = data.get("user_name", account.user_name)
             account.birth_day = data.get("birth_day", account.birth_day)
             account.address = data.get("address", account.address)
@@ -509,7 +511,9 @@ def update_account(request, account_id):
             account.gender = data.get("gender", account.gender)
             account.status = data.get("status", account.status)
 
+        # Change password
         elif request.method == "PATCH":
+
             old_password = data.get("old_password")
             new_password = data.get("new_password")
 
