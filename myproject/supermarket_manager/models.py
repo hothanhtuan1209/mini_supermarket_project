@@ -44,6 +44,8 @@ class Role(models.Model):
     Attributes:
         role_id (AutoField): The unique identifier for the role.
         role_name (CharField): The name of the role.
+        permission (ManytoManyField): The instance of permission
+        status (CharField): The status of the account.
     """
 
     role_id    = models.AutoField(primary_key=True)
