@@ -3,7 +3,8 @@ from django.db.utils import IntegrityError
 from django.views.decorators.csrf import csrf_exempt, csrf_protect
 from django.contrib.auth.hashers import make_password
 from django.core.paginator import Paginator
-from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import authenticate, login
+from django.contrib.auth import logout as logout_account
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.decorators import login_required
 
@@ -546,7 +547,7 @@ def logout(request):
     View function for logging out a user.
     """
 
-    logout(request)
+    logout_account(request)
 
     return JsonResponse({"message": LOGOUT})
 
