@@ -40,7 +40,7 @@ This is a project to build mini supermarket management software, including Accou
 > py manage.py createsuperuser
 
 7. Running server
->py manage.py server
+>py manage.py runserver
  - Go to Web browser and search localhost:8000
 
 8. Login superuser account
