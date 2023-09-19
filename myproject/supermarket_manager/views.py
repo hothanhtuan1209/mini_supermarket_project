@@ -111,24 +111,27 @@ def update_role(request, role_id):
     if request.method != "PUT":
         return JsonResponse({"message": INVALID_METHOD}, status=405)
 
-    data = json.loads(request.body)
-    role_name = data.get("role_name", None)
+    try:
+        role = Role.objects.get(role_id=role_id)
+        data = json.loads(request.body)
 
-    if role_name is not None:
-        try:
-            role = Role.objects.get(role_id=role_id)
-            role.role_name = role_name
-            role.save()
-        
-            return JsonResponse({"message": UPDATED}, status=200)
-        
-        except IntegrityError:
-            return JsonResponse({"message": EXISTS}, status=400)
-        
-        except Role.DoesNotExist:
-            return JsonResponse({"message": NOT_FOUND}, status=404)
-    
-    return JsonResponse({"message": REQUIRED}, status=400)
+        role_name = data.get("role_name", role.role_name)
+        status = data.get("status", role.status)
+
+        role.role_name = role_name
+        role.status = status
+        role.save()
+
+        return JsonResponse({"message": UPDATED}, status=200)
+
+    except Role.DoesNotExist:
+        return JsonResponse({"message": NOT_FOUND}, status=404)
+
+    except IntegrityError:
+        return JsonResponse({"message": EXISTS}, status=400)
+
+    except Exception as e:
+        return JsonResponse({"message": str(e)}, status=400)
 
 
 @csrf_exempt
@@ -247,14 +250,9 @@ def update_permission(request, permission_id):
         permission = Permission.objects.get(permission_id=permission_id)
         data = json.loads(request.body)
 
-        if "status" in data:
-            if permission.status == "A":
-                permission.status = "D"
-            else:
-                permission.status = "A"
-
         permission_name = data.get("permission_name", permission.permission_name)
         description = data.get("description", permission.description)
+        status = data.get("status", permission.status)
 
         permission.permission_name = permission_name
         permission.description = description
