@@ -49,7 +49,7 @@ class Role(models.Model):
 
     def __str__(self):
         """
-        Return a string representation of the Permission object.
+        Return a string representation of the role object.
         """
         return str(self.role_name)
 
