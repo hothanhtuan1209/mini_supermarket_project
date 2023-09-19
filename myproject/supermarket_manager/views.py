@@ -175,7 +175,7 @@ def add_permission(request):
     permission_name = data.get("permission_name", None)
     description = data.get("description", None)
 
-    if permission_name is not None and description is not None:
+    if permission_name is not None or description is not None:
         try:
             permission = Permission(
                 permission_name=permission_name, description=description
