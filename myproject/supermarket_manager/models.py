@@ -51,7 +51,7 @@ class Role(models.Model):
         """
         Return a string representation of the Permission object.
         """
-        return str(self.permission_name)
+        return str(self.role_name)
 
 
 class AccountManager(BaseUserManager):
