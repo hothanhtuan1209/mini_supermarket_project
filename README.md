@@ -17,6 +17,13 @@ This is a project to build mini supermarket management software, including Accou
 - Install django
  >pip install django 
 
+## Documents
+- Diagrams:
+> https://app.diagrams.net/#G1e3J4xwY67ERfocVtmE3PYpZXKtgzHCHV
+
+- API documents:
+> https://docs.google.com/document/d/1UShaD1QaESCUFI1v9zm6E4i1fNyGTVU76ShqcZmN4gU/edit?hl=vi
+
 ## How to use
 ### For Linux or MacOS operating systems, replace py with python
 1. First, clone this repository on your computer
