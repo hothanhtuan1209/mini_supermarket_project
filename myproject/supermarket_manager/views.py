@@ -522,7 +522,6 @@ def update_account(request, account_id):
 
             if account.check_password(old_password):
                 account.set_password(new_password)
-
                 account.save()
                 update_session_auth_hash(request, account)
 
@@ -535,10 +534,8 @@ def update_account(request, account_id):
 
         return JsonResponse({"message": UPDATED})
 
-
     except Account.DoesNotExist:
         return JsonResponse({"message": NOT_FOUND}, status=404)
-
 
     except Exception as e:
         return JsonResponse({"message": str(e)}, status=400)
