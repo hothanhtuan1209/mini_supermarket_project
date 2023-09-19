@@ -4,6 +4,7 @@ from django.views.decorators.csrf import csrf_exempt, csrf_protect
 from .models import Role, Permission, Role_Permission, Account
 import re
 from django.contrib.auth.hashers import make_password
+from django.core.paginator import Paginator
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.decorators import login_required
@@ -551,3 +552,39 @@ def logout(request):
     logout(request)
 
     return JsonResponse({"message": LOGOUT})
+
+
+@csrf_exempt
+@login_required(login_url="api/logins")
+def get_list_account(request, page):
+    """
+    Function:
+        - Retrieve a paginated list of accounts.
+        - This view retrieves a paginated list of accounts from the database and returns
+          it as a JSON response. The number of accounts displayed per page is set to 5.
+
+    Args:
+        - request (HttpRequest): The HTTP request object.
+        - page (int): The page number to retrieve.
+
+    Returns:
+        - JsonResponse: A JSON response containing the paginated list of accounts
+        and additional pagination information.
+    """
+
+    accounts = Account.objects.all()
+    paginator = Paginator(accounts, 5)
+    page_number = int(page)
+    page = paginator.get_page(page_number)
+
+    account_data = [
+        {'user_name': account.user_name, 'account_id': account.account_id} for account in page
+    ]
+
+    response_data = {
+        'accounts': account_data,
+        'current_page': page.number,
+        'total_pages': paginator.num_pages,
+    }
+
+    return JsonResponse(response_data, status = 204)

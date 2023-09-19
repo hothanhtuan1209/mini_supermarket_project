@@ -12,7 +12,8 @@ from .views import (
     get_account_detail,
     login_account,
     update_account,
-    logout
+    logout,
+    get_list_account
 )
 
 urlpatterns = [
@@ -28,5 +29,6 @@ urlpatterns = [
     path("api/accounts/<str:account_id>", get_account_detail, name="get-account-detail"),
     path("api/logins", login_account, name="login"),
     path("api/accounts/updates/<str:account_id>", update_account, name="update-account"),
-    path("api/logouts", logout, name="logout")
+    path("api/logouts", logout, name="logout"),
+    path("api/accounts/gets/<int:page>", get_list_account, name="lits-accounts")
 ]
