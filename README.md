@@ -44,7 +44,7 @@ This is a project to build mini supermarket management software, including Accou
  - Go to Web browser and search localhost:8000/admin
 
 8. Login superuser account
- - Login with account superuser
+ - Login with account superuser (login with email and password)
 
 ## How to fix csrf token error in Postman (403 forbidden)
  - In Headers of request, enter key = 'X-CSRFToken' and value '{{csrftoken}}'
