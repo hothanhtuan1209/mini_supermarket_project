@@ -8,7 +8,7 @@ import string
 
 from .constants import (GENDER_CHOICES)
 
-class AccountStatus(Enum):
+class ActiveStatus(Enum):
     ACTIVE = "Active"
     DISABLED = "Disabled"
 
@@ -27,7 +27,7 @@ class Permission(models.Model):
     permission_name = models.CharField(max_length=100, unique=True)
     description     = models.CharField(max_length=100)
     status = models.CharField(
-        max_length=10, choices=[(status.value, status.value) for status in AccountStatus], default=AccountStatus.ACTIVE.value
+        max_length=10, choices=[(status.value, status.value) for status in ActiveStatus], default=ActiveStatus.ACTIVE.value
     )
 
     def __str__(self):
@@ -52,7 +52,7 @@ class Role(models.Model):
     role_name  = models.CharField(max_length=50, unique=True)
     permission = models.ManyToManyField(Permission, through="Role_Permission")
     status = models.CharField(
-        max_length=10, choices=[(status.value, status.value) for status in AccountStatus], default=AccountStatus.ACTIVE.value
+        max_length=10, choices=[(status.value, status.value) for status in ActiveStatus], default=ActiveStatus.ACTIVE.value
     )
 
     def __str__(self):
@@ -174,7 +174,7 @@ class Account(AbstractBaseUser, PermissionsMixin):
 
     gender = models.CharField(max_length=1, choices=GENDER_CHOICES, default="M")
     status = models.CharField(
-        max_length=10, choices=[(status.value, status.value) for status in AccountStatus], default=AccountStatus.ACTIVE.value
+        max_length=10, choices=[(status.value, status.value) for status in ActiveStatus], default=ActiveStatus.ACTIVE.value
     )
 
     is_active = models.BooleanField(default=True)
