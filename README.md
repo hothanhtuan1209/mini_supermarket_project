@@ -24,6 +24,9 @@ This is a project to build mini supermarket management software, including Accou
 - API documents:
 > https://docs.google.com/document/d/1UShaD1QaESCUFI1v9zm6E4i1fNyGTVU76ShqcZmN4gU/edit?hl=vi
 
+- Postman collection:
+> https://interstellar-resonance-250390.postman.co/workspace/Test-API-~09d14045-19c3-4108-ad8b-0e97884edf77/collection/29158888-69195d40-cbb6-4c95-8cae-cdc9d5677b81?action=share&creator=29158888&active-environment=29158888-0c980a6d-3cac-4490-bc29-3e4d7b417fe9
+
 ## How to use
 ### For Linux or MacOS operating systems, replace py with python
 1. First, clone this repository on your computer
