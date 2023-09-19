@@ -175,19 +175,19 @@ def add_permission(request):
     permission_name = data.get("permission_name", None)
     description = data.get("description", None)
 
-    if permission_name is not None or description is not None:
-        try:
-            permission = Permission(
-                permission_name=permission_name, description=description
-            )
-            permission.save()
-            return JsonResponse({"message": ADDED}, status=201)
-    
-        except IntegrityError:
-            return JsonResponse({"message": EXISTS}, status=400)
-    
-    else:
+    if permission_name is None or description is None:
         return JsonResponse({"message": REQUIRED}, status=400)
+        
+    try:
+        permission = Permission(
+            permission_name=permission_name, description=description
+        )
+        permission.save()
+        
+        return JsonResponse({"message": ADDED}, status=201)
+
+    except IntegrityError:
+        return JsonResponse({"message": EXISTS}, status=400)
 
 
 @login_required(login_url="api/logins")
