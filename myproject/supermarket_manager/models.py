@@ -104,7 +104,7 @@ class AccountManager(BaseUserManager):
         except Role.DoesNotExist:
             raise ValueError(f"Role with role_id={role_id} does not exist.")
 
-        user  = self.model(email=email, user_name=user_name, role_id=role_instance, **extra_fields)
+        user = self.model(email=email, user_name=user_name, role_id=role_instance, **extra_fields)
         user.set_password(password)
         user.save(using=self._db)
         
@@ -157,15 +157,15 @@ class Account(AbstractBaseUser, PermissionsMixin):
         status (CharField): The status of the account.
     """
 
-    account_id   = models.CharField(
+    account_id = models.CharField(
         primary_key=True, max_length=5, unique=True
     )
-    user_name    = models.CharField(max_length=100)
-    password     = models.TextField(validators=[MinLengthValidator(8)])
-    role_id      = models.ForeignKey(Role, on_delete=models.CASCADE)
-    birth_day    = models.DateField()
-    address      = models.CharField(max_length=255)
-    email        = models.CharField(max_length=100, unique=True)
+    user_name = models.CharField(max_length=100)
+    password = models.TextField(validators=[MinLengthValidator(8)])
+    role_id = models.ForeignKey(Role, on_delete=models.CASCADE)
+    birth_day = models.DateField()
+    address = models.CharField(max_length=255)
+    email = models.CharField(max_length=100, unique=True)
     phone_number = models.CharField(
         validators=[RegexValidator(r"^0\d{9}$")], max_length=10
     )
