@@ -20,17 +20,10 @@ NOT_FOUND = "Not found"
 DELETED = "Delete successfully"
 
 # Choice status
-STATUS_CHOICES = [
-    ("A", "Active"),
-    ("D", "Disable")
-]
+STATUS_CHOICES = [("A", "Active"), ("D", "Disable")]
 
 # Choice gender
-GENDER_CHOICES = [
-    ("M", "Male"),
-    ("F", "Female"),
-    ("O", "Other")
-]
+GENDER_CHOICES = [("M", "Male"), ("F", "Female"), ("O", "Other")]
 
 # Message for assigned successfully
 ASSIGN = "Assign successfully"
@@ -42,7 +35,7 @@ NOT_FOUND_ROLE = "Role not found"
 PHONE_FORMAT = "Invalid phone number format"
 
 # Message password less than 8 characters
-PASSWORD_NOT_ENOUGH =  "Password must be at least 8 characters"
+PASSWORD_NOT_ENOUGH = "Password must be at least 8 characters"
 
 # Message for login successfully
 LOGIN = "Login successfully"
