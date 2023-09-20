@@ -1,12 +1,16 @@
 from django.db import models
-from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
+from django.contrib.auth.models import (
+    AbstractBaseUser,
+    BaseUserManager,
+    PermissionsMixin,
+)
 from django.core.validators import MinLengthValidator, RegexValidator
 
 from enum import Enum
 import random
 import string
 
-from .constants import (GENDER_CHOICES)
+from .constants import GENDER_CHOICES
 
 
 class ActiveStatus(Enum):
@@ -28,7 +32,9 @@ class Permission(models.Model):
     permission_name = models.CharField(max_length=100, unique=True)
     description = models.CharField(max_length=100)
     status = models.CharField(
-        max_length=10, choices=[(status.value, status.value) for status in ActiveStatus], default=ActiveStatus.ACTIVE.value
+        max_length=10,
+        choices=[(status.value, status.value) for status in ActiveStatus],
+        default=ActiveStatus.ACTIVE.value,
     )
 
     def __str__(self):
@@ -53,9 +59,10 @@ class Role(models.Model):
     role_name = models.CharField(max_length=50, unique=True)
     permission = models.ManyToManyField(Permission, through="Role_Permission")
     status = models.CharField(
-        max_length=10, choices=[(status.value, status.value) for status in ActiveStatus], default=ActiveStatus.ACTIVE.value
+        max_length=10,
+        choices=[(status.value, status.value) for status in ActiveStatus],
+        default=ActiveStatus.ACTIVE.value,
     )
-
 
     def __str__(self):
         """
@@ -73,8 +80,10 @@ class AccountManager(BaseUserManager):
     Attributes:
         BaseUserManager: The base manager class provided by Django.
     """
-    
-    def create_user(self, email, user_name, password=None, role_id=None, **extra_fields):
+
+    def create_user(
+        self, email, user_name, password=None, role_id=None, **extra_fields
+    ):
         """
         Create a new user and save it to the database.
 
@@ -91,23 +100,25 @@ class AccountManager(BaseUserManager):
         Raises:
             ValueError: If the email field is empty or if the specified role_id does not exist.
         """
-        
+
         if not email:
-            raise ValueError('The Email field must be set')
-        
+            raise ValueError("The Email field must be set")
+
         email = self.normalize_email(email)
         if role_id is None:
             raise ValueError("A role_id must be provided for the user.")
-        
+
         try:
             role_instance = Role.objects.get(role_id=role_id)
         except Role.DoesNotExist:
             raise ValueError(f"Role with role_id={role_id} does not exist.")
 
-        user = self.model(email=email, user_name=user_name, role_id=role_instance, **extra_fields)
+        user = self.model(
+            email=email, user_name=user_name, role_id=role_instance, **extra_fields
+        )
         user.set_password(password)
         user.save(using=self._db)
-        
+
         return user
 
     def create_superuser(self, email, user_name, password=None, **extra_fields):
@@ -127,16 +138,18 @@ class AccountManager(BaseUserManager):
             ValueError: If the email field is empty or if a role_id is not provided for the superuser.
         """
 
-        extra_fields.setdefault('is_staff', True)
-        extra_fields.setdefault('is_superuser', True)
+        extra_fields.setdefault("is_staff", True)
+        extra_fields.setdefault("is_superuser", True)
 
-        role_id = extra_fields.pop('role_id', None)
+        role_id = extra_fields.pop("role_id", None)
 
         if role_id is None:
             raise ValueError("A role_id must be provided for the superuser.")
 
-        user = self.create_user(email, user_name, password, role_id=role_id, **extra_fields)
-        
+        user = self.create_user(
+            email, user_name, password, role_id=role_id, **extra_fields
+        )
+
         return user
 
 
@@ -157,9 +170,7 @@ class Account(AbstractBaseUser, PermissionsMixin):
         status (CharField): The status of the account.
     """
 
-    account_id = models.CharField(
-        primary_key=True, max_length=5, unique=True
-    )
+    account_id = models.CharField(primary_key=True, max_length=5, unique=True)
     user_name = models.CharField(max_length=100)
     password = models.TextField(validators=[MinLengthValidator(8)])
     role_id = models.ForeignKey(Role, on_delete=models.CASCADE)
@@ -172,24 +183,33 @@ class Account(AbstractBaseUser, PermissionsMixin):
 
     gender = models.CharField(max_length=1, choices=GENDER_CHOICES, default="M")
     status = models.CharField(
-        max_length=10, choices=[(status.value, status.value) for status in ActiveStatus], default=ActiveStatus.ACTIVE.value
+        max_length=10,
+        choices=[(status.value, status.value) for status in ActiveStatus],
+        default=ActiveStatus.ACTIVE.value,
     )
 
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
 
-    REQUIRED_FIELDS = ['user_name', 'birth_day', 'address', 'phone_number', 'gender', 'status', 'role_id']
-    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = [
+        "user_name",
+        "birth_day",
+        "address",
+        "phone_number",
+        "gender",
+        "status",
+        "role_id",
+    ]
+    USERNAME_FIELD = "email"
 
     objects = AccountManager()
-
 
     def __str__(self):
         """
         Return a string representation of the Account object.
         """
         return str(self.user_name)
-    
+
     def random_account_id(self):
         """
         Generate a unique 5-digit account identifier.
@@ -202,7 +222,7 @@ class Account(AbstractBaseUser, PermissionsMixin):
         """
 
         while True:
-            account_id = ''.join(random.choices(string.digits, k=5))
+            account_id = "".join(random.choices(string.digits, k=5))
             if not Account.objects.filter(account_id=account_id).exists():
                 return account_id
 
@@ -218,5 +238,5 @@ class Role_Permission(models.Model):
     """
 
     role_permission_id = models.AutoField(primary_key=True)
-    role_id            = models.ForeignKey(Role, on_delete=models.CASCADE)
-    permission_id      = models.ForeignKey(Permission, on_delete=models.CASCADE)
+    role_id = models.ForeignKey(Role, on_delete=models.CASCADE)
+    permission_id = models.ForeignKey(Permission, on_delete=models.CASCADE)
