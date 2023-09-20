@@ -50,7 +50,7 @@ def create_role(request):
     if request.method != "POST":
 
         return JsonResponse({"message": INVALID_METHOD}, status=405)
-    
+
     data = json.loads(request.body)
     role_name = data.get("role_name", None)
 
@@ -58,12 +58,12 @@ def create_role(request):
         try:
             role = Role(role_name=role_name)
             role.save()
-            
+
             return JsonResponse({"message": ADDED}, status=201)
-        
+
         except IntegrityError:
             return JsonResponse({"message": EXISTS}, status=400)
-    
+
     return JsonResponse({"message": REQUIRED}, status=400)
 
 
@@ -84,7 +84,7 @@ def get_roles(request):
         role_data = [
             {"role_id": role.role_id, "role_name": role.role_name} for role in roles
         ]
-        
+
         return JsonResponse({"roles": role_data}, status=200)
 
     return JsonResponse({"message": INVALID_METHOD}, status=405)
@@ -177,20 +177,20 @@ def create_permission(request):
 
     if request.method != "POST":
         return JsonResponse({"message": INVALID_METHOD}, status=405)
-    
+
     data = json.loads(request.body)
     permission_name = data.get("permission_name", None)
     description = data.get("description", None)
 
     if permission_name is None or description is None:
         return JsonResponse({"message": REQUIRED}, status=400)
-        
+
     try:
         permission = Permission(
             permission_name=permission_name, description=description
         )
         permission.save()
-        
+
         return JsonResponse({"message": ADDED}, status=201)
 
     except IntegrityError:
@@ -211,7 +211,7 @@ def get_permissions(request):
 
     if request.method != "GET":
         return JsonResponse({"message": INVALID_METHOD}, status=405)
-        
+
     permissions = Permission.objects.all()
     permission_data = [
         {
@@ -222,7 +222,7 @@ def get_permissions(request):
         }
         for permission in permissions
     ]
-    
+
     return JsonResponse({"permissions": permission_data}, status=200)
 
 
@@ -246,7 +246,7 @@ def update_permission(request, permission_id):
 
     if request.method != "PUT":
         return JsonResponse({"message": INVALID_METHOD}, status=405)
-    
+
     try:
         permission = Permission.objects.get(permission_id=permission_id)
         data = json.loads(request.body)
@@ -260,13 +260,13 @@ def update_permission(request, permission_id):
         permission.save()
 
         return JsonResponse({"message": UPDATED}, status=200)
-    
+
     except Permission.DoesNotExist:
         return JsonResponse({"message": NOT_FOUND}, status=404)
-    
+
     except IntegrityError:
         return JsonResponse({"message": EXISTS}, status=400)
-    
+
     except Exception as e:
         return JsonResponse({"message": str(e)}, status=400)
 
@@ -294,26 +294,24 @@ def assign_permission(request):
 
     if role_id is None or permission_id is None:
         return JsonResponse({"message": REQUIRED}, status=400)
-        
+
     try:
         role = Role.objects.get(pk=role_id)
         permission = Permission.objects.get(pk=permission_id)
 
-        role_permission = Role_Permission(
-            role_id=role, permission_id=permission
-        )
+        role_permission = Role_Permission(role_id=role, permission_id=permission)
         role_permission.save()
 
         return JsonResponse({"message": ASSIGN}, status=201)
-    
+
     except Role.DoesNotExist:
         return JsonResponse({"message": NOT_FOUND}, status=404)
-    
+
     except Permission.DoesNotExist:
         return JsonResponse({"message": NOT_FOUND}, status=404)
-    
+
     except Exception as e:
-        return JsonResponse({"message": str(e)}, status=400) 
+        return JsonResponse({"message": str(e)}, status=400)
 
 
 @csrf_protect
@@ -504,7 +502,7 @@ def update_account(request, account_id):
 
         # Update account information but do not change password
         if request.method == "PUT":
- 
+
             account.user_name = data.get("user_name", account.user_name)
             account.birth_day = data.get("birth_day", account.birth_day)
             account.address = data.get("address", account.address)
@@ -576,13 +574,14 @@ def get_list_account(request, page):
     page = paginator.get_page(page_number)
 
     account_data = [
-        {'user_name': account.user_name, 'account_id': account.account_id} for account in page
+        {"user_name": account.user_name, "account_id": account.account_id}
+        for account in page
     ]
 
     response_data = {
-        'accounts': account_data,
-        'current_page': page.number,
-        'total_pages': paginator.num_pages,
+        "accounts": account_data,
+        "current_page": page.number,
+        "total_pages": paginator.num_pages,
     }
 
-    return JsonResponse(response_data, status = 204)
+    return JsonResponse(response_data, status=204)
