@@ -9,6 +9,7 @@ from django.core.validators import MinLengthValidator, RegexValidator
 from enum import Enum
 import random
 import string
+import uuid
 
 from .constants import GENDER_CHOICES
 
@@ -158,7 +159,7 @@ class Account(AbstractBaseUser, PermissionsMixin):
     A class representing user accounts.
 
     Attributes:
-        account_id (charField): The unique identifier for the account.
+        account_id (UUIDField): The unique identifier for the account.
         user_name (CharField): The name of the user.
         password (TextField): The password for the account.
         role_id (ForeignKey): The role associated with the account.
@@ -170,7 +171,7 @@ class Account(AbstractBaseUser, PermissionsMixin):
         status (CharField): The status of the account.
     """
 
-    account_id = models.CharField(primary_key=True, max_length=5, unique=True)
+    account_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False, unique=True)
     user_name = models.CharField(max_length=100)
     password = models.TextField(validators=[MinLengthValidator(8)])
     role_id = models.ForeignKey(Role, on_delete=models.CASCADE)
@@ -209,22 +210,6 @@ class Account(AbstractBaseUser, PermissionsMixin):
         Return a string representation of the Account object.
         """
         return str(self.user_name)
-
-    def random_account_id(self):
-        """
-        Generate a unique 5-digit account identifier.
-
-        This function generates a random 5-digit account identifier and checks if it already exists in the database.
-        It repeats this process until a unique identifier is found.
-
-        Returns:
-            str: A unique 5-digit account identifier.
-        """
-
-        while True:
-            account_id = "".join(random.choices(string.digits, k=5))
-            if not Account.objects.filter(account_id=account_id).exists():
-                return account_id
 
 
 class Role_Permission(models.Model):
