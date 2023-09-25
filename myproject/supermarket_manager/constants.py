@@ -23,7 +23,7 @@ DELETED = "Delete successfully"
 STATUS_CHOICES = [("A", "Active"), ("D", "Disable")]
 
 # Choice gender
-GENDER_CHOICES = [("M", "Male"), ("F", "Female"), ("O", "Other")]
+GENDER_CHOICES = [("Male", "Male"), ("Female", "Female"), ("Other", "Other")]
 
 # Message for assigned successfully
 ASSIGN = "Assign successfully"
