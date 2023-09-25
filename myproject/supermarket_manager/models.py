@@ -181,7 +181,7 @@ class Account(AbstractBaseUser, PermissionsMixin):
         validators=[RegexValidator(r"^0\d{9}$")], max_length=10
     )
 
-    gender = models.CharField(max_length=1, choices=GENDER_CHOICES, default="M")
+    gender = models.CharField(max_length=6, choices=GENDER_CHOICES, default="Male")
     status = models.CharField(
         max_length=10,
         choices=[(status.value, status.value) for status in ActiveStatus],
