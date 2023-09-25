@@ -3,6 +3,8 @@
 from django.db import migrations, models
 import supermarket_manager.models
 
+import uuid
+
 
 class Migration(migrations.Migration):
 
@@ -15,7 +17,7 @@ class Migration(migrations.Migration):
             model_name="account",
             name="account_id",
             field=models.CharField(
-                default=supermarket_manager.models.Account.random_account_id,
+                default=uuid.uuid4,
                 max_length=5,
                 primary_key=True,
                 serialize=False,
