@@ -452,7 +452,7 @@ def get_account_detail(request, account_id):
             "status": account.get_status_display(),
         }
         return render(
-            request, 'supermarket_manager/employee_detail.html',
+            request, 'employee_detail.html',
             {'account_data': account_data}
         )
 
