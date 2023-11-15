@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>User Account Detail</h1>
+
+    {% if account_data %}
+        <ul>
+            <li><strong>User Name:</strong> {{ account_data.user_name }}</li>
+            <li><strong>Role:</strong> {{ account_data.role }}</li>
+            <li><strong>Birth Day:</strong> {{ account_data.birth_day }}</li>
+            <li><strong>Address:</strong> {{ account_data.address }}</li>
+            <li><strong>Email:</strong> {{ account_data.email }}</li>
+            <li><strong>Phone Number:</strong> {{ account_data.phone_number }}</li>
+            <li><strong>Gender:</strong> {{ account_data.gender }}</li>
+            <li><strong>Status:</strong> {{ account_data.status }}</li>
+        </ul>
+    {% else %}
+        <p>User account not found.</p>
+    {% endif %}
+
+</body>
+</html>

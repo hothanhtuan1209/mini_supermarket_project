@@ -1,4 +1,5 @@
 from django.http import JsonResponse
+from django.shortcuts import render
 from django.db.utils import IntegrityError
 from django.views.decorators.csrf import csrf_exempt, csrf_protect
 from django.contrib.auth.hashers import make_password
@@ -428,7 +429,11 @@ def get_account_detail(request, account_id):
             "gender": account.get_gender_display(),
             "status": account.get_status_display(),
         }
-        return JsonResponse(account_data, status=200)
+        return render(
+            request, 'templates/employee_detail.html',
+            {'account_data': account_data}
+        )
+
     except Account.DoesNotExist:
         return JsonResponse({"message": NOT_FOUND}, status=404)
 
