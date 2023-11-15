@@ -48,7 +48,6 @@ def create_role(request):
     """
 
     if request.method != "POST":
-
         return JsonResponse({"message": INVALID_METHOD}, status=405)
 
     data = json.loads(request.body)
@@ -367,7 +366,6 @@ def create_account(request):
         and email
         and phone_number
     ):
-
         try:
             hashed_password = make_password(raw_password)
             role = Role.objects.get(role_id=role_id)
@@ -432,7 +430,6 @@ def get_account_detail(request, account_id):
         }
         return JsonResponse(account_data, status=200)
     except Account.DoesNotExist:
-
         return JsonResponse({"message": NOT_FOUND}, status=404)
 
 
@@ -502,7 +499,6 @@ def update_account(request, account_id):
 
         # Update account information but do not change password
         if request.method == "PUT":
-
             account.user_name = data.get("user_name", account.user_name)
             account.birth_day = data.get("birth_day", account.birth_day)
             account.address = data.get("address", account.address)
@@ -513,7 +509,6 @@ def update_account(request, account_id):
 
         # Change password
         elif request.method == "PATCH":
-
             old_password = data.get("old_password")
             new_password = data.get("new_password")
 

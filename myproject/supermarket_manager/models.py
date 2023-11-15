@@ -171,7 +171,9 @@ class Account(AbstractBaseUser, PermissionsMixin):
         status (CharField): The status of the account.
     """
 
-    account_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False, unique=True)
+    account_id = models.UUIDField(
+        primary_key=True, default=uuid.uuid4, editable=False, unique=True
+    )
     user_name = models.CharField(max_length=100)
     password = models.TextField(validators=[MinLengthValidator(8)])
     role_id = models.ForeignKey(Role, on_delete=models.CASCADE)
