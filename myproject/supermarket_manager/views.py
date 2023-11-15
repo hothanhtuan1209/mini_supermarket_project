@@ -13,6 +13,7 @@ import re
 import json
 
 from .models import Role, Permission, Role_Permission, Account
+from .forms import CreateRoleForm
 from .constants import (
     ADDED,
     EXISTS,
@@ -40,31 +41,31 @@ def create_role(request):
     Function:
         - View function to add a new role to the database.
 
-        - This function handles POST requests to add a new role to the database.
+        - This function handles POST requests to add a new role to the
+        database.
         - The role name must be provided in the JSON data of the request.
 
     Returns:
-        - JsonResponse with a success message if the role is added successfully.
-        - JsonResponse with an error message if the role name already exists or if the request data is invalid.
+        - JsonResponse with a success message if the role is added
+        successfully.
+        - JsonResponse with an error message if the role name already exists
+        or if the request data is invalid.
     """
 
-    if request.method != "POST":
-        return JsonResponse({"message": INVALID_METHOD}, status=405)
+    if request.method == "POST":
+        form = CreateRoleForm(request.POST)
 
-    data = json.loads(request.body)
-    role_name = data.get("role_name", None)
+        if form.is_valid():
+            role_name = form.cleaned_data["role_name"]
 
-    if role_name is not None:
-        try:
             role = Role(role_name=role_name)
             role.save()
 
             return JsonResponse({"message": ADDED}, status=201)
+    else:
+        form = CreateRoleForm()
 
-        except IntegrityError:
-            return JsonResponse({"message": EXISTS}, status=400)
-
-    return JsonResponse({"message": REQUIRED}, status=400)
+    return render(request, 'new_role.html', {'form': form})
 
 
 @login_required(login_url="api/logins")
@@ -73,7 +74,8 @@ def get_roles(request):
     Function:
         - API endpoint to retrieve a list of roles from the database.
 
-        - This function handles GET requests to retrieve a list of roles from the database.
+        - This function handles GET requests to retrieve a list of roles from
+        the database.
 
     Returns:
         - JsonResponse: A JSON response containing the list of roles.
@@ -104,9 +106,12 @@ def update_role(request, role_id):
     Returns:
         JsonResponse: A JSON response indicating the result of the update.
             - If the update is successful, returns a success message.
-            - If the role does not exist, returns an error message with status 404.
-            - If the role name is not provided or the request data is invalid, returns an error message with status 400.
-            - If the request method is not PUT, returns an error message with status 405.
+            - If the role does not exist, returns an error message with status
+            404.
+            - If the role name is not provided or the request data is invalid,
+            returns an error message with status 400.
+            - If the request method is not PUT, returns an error message with
+            status 405.
     """
 
     if request.method != "PUT":
@@ -147,7 +152,8 @@ def delete_role(request, role_id):
         role_id (str): The ID of the role to be deleted.
 
     Returns:
-        JsonResponse: A JSON response indicating the result of the delete operation.
+        JsonResponse: A JSON response indicating the result of the delete
+        operation.
     """
 
     if request.method == "DELETE":
@@ -168,11 +174,14 @@ def create_permission(request):
     Function:
         - API endpoint to add a new permission to the database.
 
-        - This function handles POST requests to add a new permission to the database.
-        - The permission name and description must be provided in the JSON data of the request.
+        - This function handles POST requests to add a new permission to the
+        database.
+        - The permission name and description must be provided in the JSON
+        data of the request.
 
     Returns:
-        - JsonResponse: A JSON response indicating the result of the add operation.
+        - JsonResponse: A JSON response indicating the result of the add
+        operation.
     """
 
     if request.method != "POST":
@@ -203,7 +212,8 @@ def get_permissions(request):
     Function:
         - API endpoint to retrieve a list of permissions from the database.
 
-        - This function handles GET requests to retrieve a list of permissions from the database.
+        - This function handles GET requests to retrieve a list of permissions
+        from the database.
 
     Returns:
         - JsonResponse: A JSON response containing the list of permissions.
@@ -233,9 +243,11 @@ def update_permission(request, permission_id):
     Function:
         - API endpoint to update a permission in the database.
 
-        - This function handles PUT requests to update the information of a permission in the database.
+        - This function handles PUT requests to update the information of a
+        permission in the database.
         - The permission ID should be provided in the URL.
-        - The updated permission data should be provided in the JSON data of the request.
+        - The updated permission data should be provided in the JSON data of
+        the request.
 
     Parameter:
         - permission_id (int): The ID of the permission to be updated.
@@ -278,11 +290,14 @@ def assign_permission(request):
     Function:
         - API endpoint to assign a permission to a role.
 
-        - This function handles POST requests to assign a permission to a role in the Role_Permission table.
-        - The role ID and permission ID should be provided in the JSON data of the request.
+        - This function handles POST requests to assign a permission to a role
+        in the Role_Permission table.
+        - The role ID and permission ID should be provided in the JSON data of
+        the request.
 
     Returns:
-        - JsonResponse: A JSON response indicating the result of the assignment.
+        - JsonResponse: A JSON response indicating the result of the
+        assignment.
     """
 
     if request.method != "POST":
@@ -321,7 +336,8 @@ def create_account(request):
     Function:
         - API endpoint to add a new account to the database
 
-        - This function handles POST requests to add a new account to the database.
+        - This function handles POST requests to add a new account to the
+        database.
 
     Attributes:
         - account_id (CharField): The unique identifier for the account.
@@ -336,7 +352,8 @@ def create_account(request):
         - status (CharField): The status of the account.
 
     Returns:
-        - JsonResponse: A JSON response indicating a result of the add operation
+        - JsonResponse: A JSON response indicating a result of the add
+        operation
     """
 
     if request.method != "POST":
@@ -393,10 +410,12 @@ def create_account(request):
 def get_account_detail(request, account_id):
     """
     Function:
-        - API endpoint to retrieve detailed information about a specific user account.
+        - API endpoint to retrieve detailed information about a specific user
+        account.
 
-        - This function handles GET requests to retrieve detailed information about a user account
-        based on the provided `account_id`. It returns a JSON response with the following details:
+        - This function handles GET requests to retrieve detailed information
+        about a user account based on the provided `account_id`. It returns a
+        JSON response with the following details:
 
             + 'user_name': The name of the user.
             + 'role': The role associated with the user account.
@@ -404,17 +423,20 @@ def get_account_detail(request, account_id):
             + 'address': The user's address.
             + 'email': The user's email address.
             + 'phone_number': The user's phone number.
-            + 'gender': The user's gender (displayed as 'Male', 'Female', or 'Other').
-            + 'status': The status of the user account (displayed as 'Active' or 'Disable').
+            + 'gender': The user's gender (displayed as 'Male', 'Female', or
+            'Other').
+            + 'status': The status of the user account (displayed as 'Active'
+            or 'Disable').
 
     Parameters:
         - request (HttpRequest): The HTTP request object.
-        - account_id (str): The unique identifier of the user account to retrieve.
+        - account_id (str): The unique identifier of the user account to
+        retrieve.
 
     Returns:
-        - JsonResponse: A JSON response containing the user account details if found,
-        or a JSON response with a 'message' field indicating 'NOT_FOUND' and a status code of 404
-        if the account is not found in the database.
+        - JsonResponse: A JSON response containing the user account details if
+        found, or a JSON response with a 'message' field indicating 'NOT_FOUND'
+        and a status code of 404 if the account is not found in the database.
     """
 
     try:
@@ -430,7 +452,7 @@ def get_account_detail(request, account_id):
             "status": account.get_status_display(),
         }
         return render(
-            request, 'templates/employee_detail.html',
+            request, 'supermarket_manager/employee_detail.html',
             {'account_data': account_data}
         )
 
@@ -446,14 +468,18 @@ def login_account(request):
 
         - This function handles POST requests for user login.
         - Users can login using their email and password.
-        - If either the email or password is missing, it returns a 400 Bad Request response.
-        - If the login credentials are incorrect, it returns a 401 Unauthorized response.
+        - If either the email or password is missing, it returns a 400 Bad
+        Request response.
+        - If the login credentials are incorrect, it returns a 401
+        Unauthorized response.
 
     Parameters:
-        - request (HttpRequest): The HTTP request object containing user login credentials.
+        - request (HttpRequest): The HTTP request object containing user login
+        credentials.
 
     Returns:
-        - JsonResponse: A JSON response indicating the result of the login attempt.
+        - JsonResponse: A JSON response indicating the result of the login
+        attempt.
     """
 
     if request.method != "POST":
@@ -481,11 +507,13 @@ def update_account(request, account_id):
     """
     Function:
         - update account information and change password
-        - This view allows managing account information such as updating user name, birth date, address,
+        - This view allows managing account information such as updating user
+        name, birth date, address,
           email, phone number, gender, and changing the password.
         - The view expects a PUT request with a JSON
-          body containing the fields to be updated for account information, or a PATCH request with
-          old_password and new_password fields to change the password.
+          body containing the fields to be updated for account information, or
+          a PATCH request with old_password and new_password fields to
+          change the password.
 
     Parameters:
         - request: The HTTP request object.
@@ -556,16 +584,17 @@ def get_list_account(request, page):
     """
     Function:
         - Retrieve a paginated list of accounts.
-        - This view retrieves a paginated list of accounts from the database and returns
-          it as a JSON response. The number of accounts displayed per page is set to 5.
+        - This view retrieves a paginated list of accounts from the database
+        and returns it as a JSON response. The number of accounts displayed
+        per page is set to 5.
 
     Args:
         - request (HttpRequest): The HTTP request object.
         - page (int): The page number to retrieve.
 
     Returns:
-        - JsonResponse: A JSON response containing the paginated list of accounts
-        and additional pagination information.
+        - JsonResponse: A JSON response containing the paginated list of
+        accounts and additional pagination information.
     """
 
     accounts = Account.objects.all()
